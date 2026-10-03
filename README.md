@@ -1,91 +1,203 @@
-# 🎓 Student Data Management System
+# 🎓 Student Data Management & Live Analytics Platform
 
 > ### 🌐 [👉 Click Here to Open Live Interactive Web Analytics Dashboard](https://pallapuankammarao-c.github.io/StudentDatamManagement/)
-> **Live interactive web analytics dashboard accessible anywhere, on any device without installation!**
+> **Instant 24/7 web access directly in your browser — no installation or login required!**
 
-**Smart Student Analytics & Management Platform** — a full-stack Flask + SQLite web app with a modern SaaS-style analytics dashboard.
+[![Live Demo](https://img.shields.io/badge/Demo-Live%20Dashboard-6366f1?style=for-the-badge&logo=google-chrome&logoColor=white)](https://pallapuankammarao-c.github.io/StudentDatamManagement/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.0+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Pandas](https://img.shields.io/badge/Pandas-Analytics-150458?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org/)
+[![Chart.js](https://img.shields.io/badge/Chart.js-Interactive-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://chartjs.org/)
 
-## Features
-- Full CRUD for students (add, view profile, edit, delete with confirmation modal), persisted in SQLite
-- Animated dashboard: live stat counters, performance trend, course doughnut, marks distribution, top-5 leaderboard, recent students
-- Analytics page with 6 Chart.js charts, all calculated from the database with Pandas
-- Records table with live search, sorting, filters (course, year, status, marks range) and pagination
-- Global search (ID, name, course, email) with dropdown results
-- CSV export (Pandas), JSON export, validated JSON import with overwrite confirmation
-- Dark / light mode (saved in `localStorage`), collapsible sidebar, mobile hamburger menu, toasts, skeleton loaders
-- Server-side validation, parameterised SQL, escaped output, JSON error responses
-- 18 realistic sample students created automatically on first launch
+---
 
-## Technology stack
-| Layer | Tools |
+## 🌟 Overview
+
+**EduPulse Student Data Management & Analytics Platform** is a full-stack academic performance intelligence platform built with Python, Flask, SQLite, and Pandas. It delivers a modern SaaS-style analytics interface with interactive charts, real-time KPI counters, cohort tracking, leaderboard rankings, and complete student records management.
+
+---
+
+## ✨ Key Features
+
+- **📊 Live Executive Dashboard**:
+  - 5 Animated Metric Counters: Total Enrolled, Class Average %, Pass Percentage (&ge; 40%), Peak Score, and Active Academic Tracks.
+  - Interactive Chart.js charts: Cohort Score Progression over time, Course Distribution doughnut, Grade Tier breakdown, and Department Averages comparison.
+  - Top 5 Student Valedictorian Leaderboard with trophies and performance badges.
+  - Recent Student Admissions activity feed with score progress tracks.
+
+- **👥 Student Directory & Records**:
+  - Dual view toggle: **Responsive Data Table View** and **Interactive Card Grid View**.
+  - Multi-parameter live search: ID, Full Name, Course, Email, Department.
+  - Multi-filters: Filter by Academic Track (CSE, ECE, EEE, MECH, CIVIL, IT, AIML, DS), Academic Year (1–4), and Grade Tier.
+  - Instant sorting: Marks (High to Low / Low to High), Name (A-Z), and Date Enrolled.
+
+- **📈 Deep Academic Analytics**:
+  - 6 full-size data visualizations powered by Pandas statistical aggregation:
+    1. Score Progression Time-Series Line Chart
+    2. Department Enrollment Doughnut Chart
+    3. Grade Tier Distribution (Excellent, Good, Average, Needs Improvement)
+    4. Department Mean Score Comparison Bar Chart
+    5. Gender Representation Pie Chart
+    6. Year-wise Enrollment Distribution Bar Chart
+
+- **🎓 Student Profile & Report Cards**:
+  - Individual student report cards with performance evaluation, score progress circle, personal information, and print-ready layout.
+
+- **➕ Student Enrollment & Validation**:
+  - Form validation with course-to-department auto-linking.
+  - Real-time interactive marks range slider with live grade tier preview.
+
+- **📥 Data Import & Export**:
+  - One-click CSV and JSON exports for reporting and data pipelines.
+  - JSON bulk upload with duplicate ID validation and overwrite controls.
+
+- **🌓 Design System & UX**:
+  - Premium Dark & Light mode switcher with `localStorage` memory.
+  - Responsive mobile drawer navigation, toast notifications, and global search autocomplete dropdown.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Tools / Libraries |
 |---|---|
-| Frontend | HTML5, CSS3, Vanilla JavaScript, Chart.js, Font Awesome, Google Fonts |
-| Backend | Python, Flask (REST API, JSON) |
-| Database | SQLite (`students.db`) |
-| Data processing | Pandas |
+| **Frontend** | HTML5, Vanilla CSS3 (Custom Design System), JavaScript (ES6+), Chart.js 4, Font Awesome 6, Google Fonts |
+| **Backend** | Python 3.10+, Flask (REST API, JSON Endpoints) |
+| **Database** | SQLite 3 (`students.db`) |
+| **Analytics Engine** | Pandas (Aggregation, GroupBy, Monthly Trends) |
+| **Deployment** | GitHub Pages (Live Interactive Web App), Cloudflare Tunnel / WSGI |
 
-## Screenshots
-Add screenshots to `static/images/` and link them here:
+---
 
-| Dashboard | Analytics |
-|---|---|
-| `static/images/dashboard.png` | `static/images/analytics.png` |
+## 🚀 Quick Start (Running Locally)
 
-## Installation
+### 1. Clone the Repository
 ```bash
-# 1. Create a virtual environment
-python -m venv venv
-
-# 2. Activate it
-venv\Scripts\activate          # Windows (PowerShell / CMD)
-source venv/bin/activate       # macOS / Linux
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Run
-python app.py
+git clone https://github.com/pallapuankammarao-c/StudentDatamManagement.git
+cd StudentDatamManagement
 ```
-Open **http://127.0.0.1:5000** in your browser. The database and sample data are created automatically.
-(An internet connection is needed for the Chart.js, Font Awesome and Google Fonts CDNs.)
 
-Optional environment variables: `SECRET_KEY` (session secret), `FLASK_DEBUG=1` (auto-reload during development).
+### 2. Create and Activate Virtual Environment
+```bash
+# Windows (PowerShell / CMD):
+python -m venv venv
+venv\Scripts\activate
 
-## API endpoints
+# macOS / Linux:
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Application
+```bash
+python app.py
+
+
+---
+
+## 🌐 Public Live Web App (GitHub Pages)
+
+You can also run the full interactive dashboard directly in any browser without installing Python:
+
+👉 **[https://pallapuankammarao-c.github.io/StudentDatamManagement/](https://pallapuankammarao-c.github.io/StudentDatamManagement/)**
+
+---
+
+## 📡 REST API Endpoints
+
 | Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/students` | List students. Params: `q, course, year, status, min, max, sort, order, page, per_page` |
-| POST | `/api/students` | Create a student (201, or 400 / 409) |
-| GET | `/api/students/<id>` | Get one student |
-| PUT | `/api/students/<id>` | Update a student |
-| DELETE | `/api/students/<id>` | Delete a student |
-| GET | `/api/students/search?q=` | Search by ID, name, course or email |
-| GET | `/api/analytics` | Summary + chart data (Pandas) |
-| GET | `/api/export/csv` · `/api/export/json` | Download `students.csv` / `students.json` |
-| POST | `/api/import/json` | Import `{"records": [...], "overwrite": false}` — returns 409 with duplicate IDs unless `overwrite` is true |
+| `GET` | `/api/students` | List, filter, sort, and paginate students (`q, course, year, status, min, max, sort, order, page, per_page`) |
+| `POST` | `/api/students` | Create new student record with validation (201 Created / 400 Bad Request / 409 Conflict) |
+| `GET` | `/api/students/<id>` | Fetch student record by ID |
+| `PUT` | `/api/students/<id>` | Update student profile and academic marks |
+| `DELETE` | `/api/students/<id>` | Delete student record |
+| `GET` | `/api/students/search?q=` | Fast global search across ID, name, course, and email |
+| `GET` | `/api/analytics` | Statistical summaries, grade distributions, and trend data calculated via Pandas |
+| `GET` | `/api/notifications` | Real-time activity notifications and performance alerts |
+| `GET` | `/api/export/csv` | Download complete dataset as `students.csv` |
+| `GET` | `/api/export/json` | Download complete dataset as `students.json` |
+| `POST` | `/api/import/json` | Bulk import records with overwrite confirmation |
 
-## Database
-SQLite file `students.db`, table `students`: `id` (unique, primary key), `name`, `email`, `phone`, `age`, `gender`, `course`, `department`, `year`, `marks`, `address`, `created_at`.
-Status is derived from marks: **Excellent** ≥ 90, **Good** 70–89, **Average** 60–69, **Needs Improvement** < 60. Pass mark is 40 (`PASS_MARK` in `database.py`).
+---
 
-## Project structure
+## 🗄️ Database Schema
+
+SQLite table `students`:
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `TEXT` | Unique Student ID (Primary Key, e.g. `S1001`) |
+| `name` | `TEXT` | Full Name |
+| `email` | `TEXT` | Email Address |
+| `phone` | `TEXT` | Phone Number |
+| `age` | `INTEGER` | Age (15–60) |
+| `gender` | `TEXT` | Gender (`Male`, `Female`, `Other`) |
+| `course` | `TEXT` | Academic Program Track (e.g. `CSE`, `ECE`, `AIML`, `DS`) |
+| `department` | `TEXT` | Department Name |
+| `year` | `INTEGER` | Academic Year (1–4) |
+| `marks` | `REAL` | Score (0.00 – 100.00%) |
+| `address` | `TEXT` | City / Residential Address |
+| `created_at` | `TEXT` | Timestamp of enrollment (`YYYY-MM-DD HH:MM:SS`) |
+
+> **Grade Tier Classification**:
+> - **Excellent**: &ge; 90%
+> - **Good**: 70% – 89%
+> - **Average**: 60% – 69%
+> - **Needs Improvement**: < 60%
+> - **Passing Mark**: &ge; 40%
+
+---
+
+## 📁 Project Structure
+
 ```
-StudentDataManagement/
-├── app.py              # Flask routes, REST API, error handling
-├── database.py         # SQLite layer, validation, Pandas analytics, seed data
-├── requirements.txt
-├── templates/          # base, index, students, add_student, analytics, profile, settings
-├── static/css/style.css
-├── static/js/          # common.js, dashboard.js, students.js, analytics.js
-└── data/               # students.json / students.csv (generated exports)
+StudentDatamManagement/
+├── .github/
+│   └── workflows/
+│       └── pages.yml        # Automated GitHub Pages CI/CD workflow
+├── data/
+│   ├── students.csv         # Generated CSV export dataset
+│   └── students.json        # Generated JSON export dataset
+├── static/
+│   ├── css/
+│   │   └── style.css        # Responsive CSS design system (Dark & Light)
+│   └── js/
+│       ├── common.js        # Global search, theme switcher, notifications, toasts
+│       ├── dashboard.js     # Live metric counters, Chart.js visualizations
+│       ├── students.js      # Filtering, search, modals, pagination
+│       └── analytics.js     # Deep cohort analytics charts
+├── templates/
+│   ├── base.html            # Core layout with responsive navigation & sidebar
+│   ├── index.html           # Live Executive Dashboard
+│   ├── students.html        # Student Directory & Records table
+│   ├── analytics.html       # Deep Academic Analytics page
+│   ├── profile.html         # Individual Student Profile & Report Card
+│   ├── add_student.html     # Student Registration form
+│   └── settings.html        # Public sharing hub & export settings
+├── app.py                   # Flask REST API, routing, error handling
+├── database.py              # SQLite data access layer, validation, Pandas analytics
+├── index.html               # Standalone interactive dashboard for GitHub Pages
+├── requirements.txt         # Project dependencies
+└── README.md                # Project documentation
 ```
 
-## Notes
-- Admin / Logout are UI elements only; no authentication is implemented. Add Flask-Login before any public deployment.
-- Student rows are stored in one table, so there is no separate "courses" table; course totals are computed from student records.
+---
 
-## Future enhancements
-Authentication and roles, attendance and subject-wise marks, PDF report cards, email notifications, PostgreSQL support, unit tests and CI.
+## 👨‍💻 Author
 
-## Author
-**Your Name** — [GitHub](https://github.com/your-username) · [LinkedIn](https://linkedin.com/in/your-profile)
+**Pallapu Ankamma Rao**
+- **GitHub**: [@pallapuankammarao-c](https://github.com/pallapuankammarao-c) · [@pallapuankammarao](https://github.com/pallapuankammarao)
+- **Email**: [pallapuankamma035@gmail.com](mailto:pallapuankammarao035@gmail.com)
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
