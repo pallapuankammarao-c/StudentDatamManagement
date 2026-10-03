@@ -1,5 +1,8 @@
 # 🎓 Student Data Management System
 
+> ### 🌐 [👉 Click Here to Open Live Interactive Web Analytics Dashboard](https://pallapuankammarao-c.github.io/StudentDatamManagement/)
+> **Live interactive web analytics dashboard accessible anywhere, on any device without installation!**
+
 **Smart Student Analytics & Management Platform** — a full-stack Flask + SQLite web app with a modern SaaS-style analytics dashboard.
 
 ## Features

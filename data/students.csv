@@ -1,0 +1,19 @@
+id,name,email,phone,age,gender,course,department,year,marks,address,created_at
+S1018,Suresh Naidu,suresh.naidu@example.edu,9876555637,20,Male,ECE,Electronics & Communication,2,47.0,"Visakhapatnam, Andhra Pradesh",2026-01-24 18:07:17
+S1017,Meghana Rao,meghana.rao@example.edu,9876554906,18,Female,CSE,Computer Science & Engineering,1,94.0,"Chennai, Tamil Nadu",2026-02-05 19:07:17
+S1016,Rahul Verma,rahul.verma@example.edu,9876554175,19,Male,AIML,Artificial Intelligence & ML,2,83.0,"Hyderabad, Telangana",2026-02-17 20:07:17
+S1015,Anusha Reddy,anusha.reddy@example.edu,9876553444,20,Female,IT,Information Technology,3,58.0,"Vijayawada, Andhra Pradesh",2026-03-03 21:07:17
+S1014,Praveen Babu,praveen.babu@example.edu,9876552713,23,Male,CIVIL,Civil Engineering,4,74.0,"Guntur, Andhra Pradesh",2026-03-15 22:07:17
+S1013,Sneha Latha,sneha.latha@example.edu,9876551982,18,Female,EEE,Electrical & Electronics,1,69.0,"Bapatla, Andhra Pradesh",2026-03-27 23:07:17
+S1012,Aditya Rao,aditya.rao@example.edu,9876551251,22,Male,DS,Data Science,4,90.5,"Visakhapatnam, Andhra Pradesh",2026-04-11 00:07:17
+S1011,Pooja Sharma,pooja.sharma@example.edu,9876550520,18,Female,IT,Information Technology,1,81.0,"Chennai, Tamil Nadu",2026-04-23 01:07:17
+S1010,Naveen Kumar,naveen.kumar@example.edu,9876549789,21,Male,MECH,Mechanical Engineering,3,38.0,"Hyderabad, Telangana",2026-05-07 02:07:17
+S1009,Divya Bharathi,divya.bharathi@example.edu,9876549058,19,Female,EEE,Electrical & Electronics,2,61.0,"Vijayawada, Andhra Pradesh",2026-05-21 03:07:17
+S1008,Mohammed Irfan,mohammed.irfan@example.edu,9876548327,21,Male,ECE,Electronics & Communication,3,72.0,"Guntur, Andhra Pradesh",2026-06-04 04:07:17
+S1007,Harika Chowdary,harika.chowdary@example.edu,9876547596,18,Female,AIML,Artificial Intelligence & ML,1,88.0,"Bapatla, Andhra Pradesh",2026-06-21 05:07:17
+S1006,Venkata Sai,venkata.sai@example.edu,9876546865,22,Male,CSE,Computer Science & Engineering,4,96.0,"Visakhapatnam, Andhra Pradesh",2026-07-04 06:07:17
+S1005,Lakshmi Prasanna,lakshmi.prasanna@example.edu,9876546134,19,Female,CIVIL,Civil Engineering,2,54.0,"Chennai, Tamil Nadu",2026-07-18 07:07:17
+S1004,Karthik Varma,karthik.varma@example.edu,9876545403,18,Male,MECH,Mechanical Engineering,1,66.0,"Hyderabad, Telangana",2026-08-03 08:07:17
+S1003,Sravani Devi,sravani.devi@example.edu,9876544672,22,Female,ECE,Electronics & Communication,4,78.0,"Vijayawada, Andhra Pradesh",2026-08-16 09:07:17
+S1002,Ravi Teja,ravi.teja@example.edu,9876543941,19,Male,CSE,Computer Science & Engineering,2,85.0,"Guntur, Andhra Pradesh",2026-08-31 10:07:17
+S1001,Ankamma Reddy,ankamma.reddy@example.edu,9876543210,20,Female,CSE,Computer Science & Engineering,3,92.5,"Bapatla, Andhra Pradesh",2026-09-18 11:07:17
