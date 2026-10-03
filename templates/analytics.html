@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Deep Academic Analytics & Insights{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-title-wrap">
+    <h1><i class="fa-solid fa-chart-line" style="color: var(--primary); margin-right: 0.4rem;"></i> Academic Analytics & Intelligence</h1>
+    <p>Statistical analysis computed using Pandas across grade bands, department performance, and demographic trends.</p>
+  </div>
+  <div class="page-actions">
+    <a href="/api/export/csv" class="btn btn-secondary btn-sm" download>
+      <i class="fa-solid fa-download"></i> Export Dataset
+    </a>
+    <a href="/" class="btn btn-primary btn-sm">
+      <i class="fa-solid fa-arrow-left"></i> Dashboard
+    </a>
+  </div>
+</div>
+
+<!-- Detailed KPIs Row -->
+<div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));">
+  <div class="metric-card">
+    <div class="metric-label">Total Cohort</div>
+    <div class="metric-value" id="an-total-students" style="font-size: 1.7rem;">--</div>
+    <div class="metric-footer" style="color: var(--text-muted);">Active Students</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Mean Score</div>
+    <div class="metric-value" id="an-avg-marks" style="font-size: 1.7rem; color: var(--primary);">--%</div>
+    <div class="metric-footer" style="color: var(--text-muted);">Batch Average</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Pass Percentage</div>
+    <div class="metric-value" id="an-pass-rate" style="font-size: 1.7rem; color: var(--success);">--%</div>
+    <div class="metric-footer" style="color: var(--text-muted);">&ge; 40% Pass Mark</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Highest Score</div>
+    <div class="metric-value" id="an-highest-marks" style="font-size: 1.7rem; color: #eab308;">--%</div>
+    <div class="metric-footer" style="color: var(--text-muted);">Peak Grade</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Lowest Score</div>
+    <div class="metric-value" id="an-lowest-marks" style="font-size: 1.7rem; color: var(--danger);">--%</div>
+    <div class="metric-footer" style="color: var(--text-muted);">Minimum Score</div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-label">Academic Tracks</div>
+    <div class="metric-value" id="an-courses-count" style="font-size: 1.7rem; color: var(--secondary);">--</div>
+    <div class="metric-footer" style="color: var(--text-muted);">Departments</div>
+  </div>
+</div>
+
+<!-- 6 Deep Analytics Charts -->
+<div class="charts-grid">
+  <!-- Chart 1: Performance Trend -->
+  <div class="card col-8">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-arrow-trend-up" style="color: var(--primary);"></i>
+        Cohort Score Progression Over Time
+      </div>
+      <span class="badge-tag">Pandas Aggregation</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="anTrendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 2: Course Distribution -->
+  <div class="card col-4">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-chart-pie" style="color: var(--secondary);"></i>
+        Course Enrollment Ratio
+      </div>
+      <span class="badge-tag">By Department</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="anCourseChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 3: Course Average Marks -->
+  <div class="card col-6">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-chart-simple" style="color: #8b5cf6;"></i>
+        Academic Performance Comparison by Department
+      </div>
+      <span class="badge-tag">Mean Score</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="anCourseAvgChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 4: Marks Distribution Bands -->
+  <div class="card col-6">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-bars-staggered" style="color: var(--success);"></i>
+        Student Grade Tier Distribution
+      </div>
+      <span class="badge-tag">5 Performance Tiers</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="anMarksDistChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 5: Gender Ratio -->
+  <div class="card col-6">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-venus-mars" style="color: #ec4899;"></i>
+        Gender Representation
+      </div>
+      <span class="badge-tag">Demographics</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="anGenderChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 6: Year-wise Enrollment -->
+  <div class="card col-6">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-calendar-days" style="color: var(--secondary);"></i>
+        Enrollment Distribution by Academic Year
+      </div>
+      <span class="badge-tag">Years 1 - 4</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="anYearChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+{% endblock %}

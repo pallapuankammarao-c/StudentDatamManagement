@@ -194,4 +194,13 @@ def handle_exception(exc):
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=os.environ.get("FLASK_DEBUG") == "1")
+    host = os.environ.get("FLASK_HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", 5000))
+    debug = os.environ.get("FLASK_DEBUG") == "1"
+    print(f"\n=======================================================")
+    print(f"  Student Data Management & Live Analytics Dashboard")
+    print(f"=======================================================")
+    print(f"-> Local URL:       http://localhost:{port}")
+    print(f"-> Network URL:     http://127.0.0.1:{port}")
+    print(f"=======================================================\n")
+    app.run(host=host, port=port, debug=debug)

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Student{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <h1><i class="fa-solid fa-user-plus" style="color: var(--primary); margin-right: 0.4rem;"></i> Register New Student</h1>
+      <p>Enroll a new student into the database with validated contact, program, and grade information.</p>
+    </div>
+    <div class="page-actions">
+      <a href="/students" class="btn btn-secondary btn-sm">
+        <i class="fa-solid fa-arrow-left"></i> Cancel & Return
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Student Information Form</div>
+      <div id="preview-status-pill" class="badge-status status-good">
+        Status Preview: Good
+      </div>
+    </div>
+    <div class="card-body">
+      <form id="add-student-form">
+        <!-- Student ID & Name -->
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="student_id">Student ID <span style="color: var(--danger);">*</span></label>
+            <input type="text" id="student_id" name="id" class="form-control" placeholder="e.g. S1025 or 24F05A0504" required autocomplete="off">
+            <small style="color: var(--text-muted); font-size: 0.73rem;">Letters, numbers, dash or underscore (2-20 chars)</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="student_name">Full Name <span style="color: var(--danger);">*</span></label>
+            <input type="text" id="student_name" name="name" class="form-control" placeholder="e.g. Ankamma Rao Pallapu" required autocomplete="name">
+          </div>
+        </div>
+
+        <!-- Email & Phone -->
+        <div class="form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="student_email">Email Address <span style="color: var(--danger);">*</span></label>
+            <input type="email" id="student_email" name="email" class="form-control" placeholder="student@example.edu" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="student_phone">Phone Number <span style="color: var(--danger);">*</span></label>
+            <input type="tel" id="student_phone" name="phone" class="form-control" placeholder="+91 9876543210" required autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Age, Gender, Year -->
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="student_age">Age <span style="color: var(--danger);">*</span></label>
+            <input type="number" id="student_age" name="age" class="form-control" min="15" max="60" value="20" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="student_gender">Gender <span style="color: var(--danger);">*</span></label>
+            <select id="student_gender" name="gender" class="form-control" required>
+              {% for g in genders %}
+                <option value="{{ g }}">{{ g }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="student_year">Academic Year <span style="color: var(--danger);">*</span></label>
+            <select id="student_year" name="year" class="form-control" required>
+              {% for y, label in years %}
+                <option value="{{ y }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <!-- Course, Department & Marks -->
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="student_course">Course Program <span style="color: var(--danger);">*</span></label>
+            <select id="student_course" name="course" class="form-control" required>
+              {% for c in courses %}
+                <option value="{{ c }}">{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label" for="student_dept">Department</label>
+            <input type="text" id="student_dept" name="department" class="form-control" value="{{ course_dept[courses[0]] }}" required>
+          </div>
+        </div>
+
+        <!-- Marks & Realtime Slider -->
+        <div class="form-group" style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <label class="form-label" style="margin-bottom: 0;">Academic Marks (Score) <span style="color: var(--danger);">*</span></label>
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <input type="number" id="marks_input" name="marks" class="form-control" style="width: 85px; text-align: center; font-weight: 700; font-size: 1.1rem; color: var(--primary);" min="0" max="100" step="0.5" value="75" required>
+              <span style="font-weight: 700;">%</span>
+            </div>
+          </div>
+          <input type="range" id="marks_slider" min="0" max="100" step="0.5" value="75" style="width: 100%; accent-color: var(--primary); cursor: pointer;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+            <span>0% (Fail)</span>
+            <span>40% (Pass mark)</span>
+            <span>60% (Average)</span>
+            <span>70% (Good)</span>
+            <span>90%+ (Excellent)</span>
+          </div>
+        </div>
+
+        <!-- Address -->
+        <div class="form-group">
+          <label class="form-label" for="student_address">Residential Address / City</label>
+          <textarea id="student_address" name="address" class="form-control" rows="2" placeholder="e.g. Guntur, Andhra Pradesh"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+          <a href="/students" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary" id="btn-submit-student">
+            <i class="fa-solid fa-plus"></i> Enroll Student
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const courseDeptMap = {{ course_dept | tojson }};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const courseSelect = document.getElementById('student_course');
+  const deptInput = document.getElementById('student_dept');
+  const marksInput = document.getElementById('marks_input');
+  const marksSlider = document.getElementById('marks_slider');
+  const statusPill = document.getElementById('preview-status-pill');
+  const form = document.getElementById('add-student-form');
+
+  // Auto-sync department when course changes
+  if (courseSelect && deptInput) {
+    courseSelect.addEventListener('change', () => {
+      deptInput.value = courseDeptMap[courseSelect.value] || '';
+    });
+  }
+
+  // Sync marks slider and input
+  function updateMarksStatus(val) {
+    const marks = parseFloat(val) || 0;
+    marksInput.value = marks;
+    marksSlider.value = marks;
+
+    let status = 'Needs Improvement';
+    let cls = 'status-needs-improvement';
+    if (marks >= 90) { status = 'Excellent'; cls = 'status-excellent'; }
+    else if (marks >= 70) { status = 'Good'; cls = 'status-good'; }
+    else if (marks >= 60) { status = 'Average'; cls = 'status-average'; }
+
+    statusPill.className = `badge-status ${cls}`;
+    statusPill.textContent = `Status Preview: ${status} (${marks}%)`;
+  }
+
+  marksInput.addEventListener('input', (e) => updateMarksStatus(e.target.value));
+  marksSlider.addEventListener('input', (e) => updateMarksStatus(e.target.value));
+
+  // Form Submission
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-submit-student');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enrolling...';
+
+    const payload = {
+      id: document.getElementById('student_id').value.trim(),
+      name: document.getElementById('student_name').value.trim(),
+      email: document.getElementById('student_email').value.trim(),
+      phone: document.getElementById('student_phone').value.trim(),
+      age: parseInt(document.getElementById('student_age').value),
+      gender: document.getElementById('student_gender').value,
+      year: parseInt(document.getElementById('student_year').value),
+      course: document.getElementById('student_course').value,
+      department: document.getElementById('student_dept').value.trim(),
+      marks: parseFloat(document.getElementById('marks_input').value),
+      address: document.getElementById('student_address').value.trim(),
+    };
+
+    try {
+      const res = await fetch('/api/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || Object.values(data.errors || {}).join('\n') || 'Failed to enroll student');
+      }
+
+      showToast('Student enrolled successfully!', 'success');
+      setTimeout(() => {
+        window.location.href = `/students/${encodeURIComponent(data.id)}`;
+      }, 800);
+    } catch (err) {
+      showToast(err.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-plus"></i> Enroll Student';
+    }
+  });
+});
+</script>
+{% endblock %}

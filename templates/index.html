@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Live Student Analytics Dashboard{% endblock %}
+
+{% block content %}
+<!-- Live Hero Public Banner -->
+<div class="public-banner">
+  <div class="banner-content">
+    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.65rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase;">
+      <i class="fa-solid fa-satellite-dish"></i> Public Live Analytics Dashboard
+    </div>
+    <h2>Smart Student Data & Academic Performance Hub</h2>
+    <p>Comprehensive real-time tracking of academic performance, course distributions, and student outcomes.</p>
+  </div>
+  <div class="banner-actions">
+    <button class="btn btn-banner-light btn-open-share">
+      <i class="fa-solid fa-share-nodes"></i> Share Live Link
+    </button>
+    <a href="/add-student" class="btn btn-banner-glass">
+      <i class="fa-solid fa-user-plus"></i> Add Student
+    </a>
+  </div>
+</div>
+
+<!-- Header Controls -->
+<div class="page-header" style="margin-bottom: 1.5rem;">
+  <div class="page-title-wrap">
+    <h1>Executive Overview</h1>
+    <p id="last-updated-text" style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem;">
+      <i class="fa-solid fa-rotate" style="font-size: 0.75rem;"></i> Syncing real-time database records...
+    </p>
+  </div>
+  <div class="page-actions">
+    <button class="btn btn-secondary btn-sm" id="refresh-dashboard-btn" title="Refresh Live Data">
+      <i class="fa-solid fa-arrows-rotate"></i> Refresh
+    </button>
+    <a href="/api/export/csv" class="btn btn-secondary btn-sm" download title="Download CSV Dataset">
+      <i class="fa-solid fa-download"></i> Export CSV
+    </a>
+    <a href="/records" class="btn btn-primary btn-sm">
+      <i class="fa-solid fa-table"></i> View All Records
+    </a>
+  </div>
+</div>
+
+<!-- 5 Key Metric Cards -->
+<div class="metrics-grid">
+  <!-- Metric 1: Total Students -->
+  <div class="metric-card">
+    <div class="metric-top">
+      <span class="metric-label">Total Enrolled</span>
+      <div class="metric-icon-wrap metric-icon-indigo">
+        <i class="fa-solid fa-user-graduate"></i>
+      </div>
+    </div>
+    <div class="metric-value" id="stat-total-students">--</div>
+    <div class="metric-footer">
+      <span class="metric-badge metric-badge-success"><i class="fa-solid fa-circle-check"></i> Active</span>
+      <span>Registered in system</span>
+    </div>
+  </div>
+
+  <!-- Metric 2: Class Average Marks -->
+  <div class="metric-card">
+    <div class="metric-top">
+      <span class="metric-label">Class Average</span>
+      <div class="metric-icon-wrap metric-icon-cyan">
+        <i class="fa-solid fa-chart-simple"></i>
+      </div>
+    </div>
+    <div class="metric-value" id="stat-avg-marks">--%</div>
+    <div class="metric-footer">
+      <span class="metric-badge metric-badge-success">Overall</span>
+      <span>Mean academic score</span>
+    </div>
+  </div>
+
+  <!-- Metric 3: Pass Percentage -->
+  <div class="metric-card">
+    <div class="metric-top">
+      <span class="metric-label">Pass Rate</span>
+      <div class="metric-icon-wrap metric-icon-emerald">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+    </div>
+    <div class="metric-value" id="stat-pass-rate">--%</div>
+    <div class="metric-footer">
+      <span class="metric-badge metric-badge-success">&ge; 40% Pass mark</span>
+      <span>Qualified students</span>
+    </div>
+  </div>
+
+  <!-- Metric 4: Top Score -->
+  <div class="metric-card">
+    <div class="metric-top">
+      <span class="metric-label">Top Score</span>
+      <div class="metric-icon-wrap metric-icon-amber">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+    </div>
+    <div class="metric-value" id="stat-highest-marks">--%</div>
+    <div class="metric-footer">
+      <span class="metric-badge metric-badge-warning">Top Mark</span>
+      <span>Class valedictorian</span>
+    </div>
+  </div>
+
+  <!-- Metric 5: Total Courses -->
+  <div class="metric-card">
+    <div class="metric-top">
+      <span class="metric-label">Departments</span>
+      <div class="metric-icon-wrap metric-icon-rose">
+        <i class="fa-solid fa-building-columns"></i>
+      </div>
+    </div>
+    <div class="metric-value" id="stat-total-courses">--</div>
+    <div class="metric-footer">
+      <span class="metric-badge metric-badge-success">8 Tracks</span>
+      <span>Engineering & Tech</span>
+    </div>
+  </div>
+</div>
+
+<!-- Primary Charts Grid -->
+<div class="charts-grid">
+  <!-- Chart 1: Performance Trend -->
+  <div class="card col-8">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-arrow-trend-up" style="color: var(--primary);"></i>
+        Academic Performance Trend Over Time
+      </div>
+      <span class="badge-tag">Monthly Average</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 2: Course Distribution -->
+  <div class="card col-4">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-chart-pie" style="color: var(--secondary);"></i>
+        Course Enrollment
+      </div>
+      <span class="badge-tag">Breakdown</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="courseDoughnutChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 3: Marks Distribution -->
+  <div class="card col-6">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-layer-group" style="color: var(--success);"></i>
+        Grade Band Distribution
+      </div>
+      <span class="badge-tag">5 Performance Tiers</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="marksDistChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 4: Average Marks by Course -->
+  <div class="card col-6">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-chart-column" style="color: var(--warning);"></i>
+        Average Score by Course
+      </div>
+      <span class="badge-tag">Comparative</span>
+    </div>
+    <div class="card-body">
+      <div class="chart-wrapper">
+        <canvas id="courseAvgChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Section: Leaderboard + Recent Students -->
+<div class="charts-grid">
+  <!-- Top 5 Leaderboard -->
+  <div class="card col-4">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-crown" style="color: #eab308;"></i>
+        Top Performing Students
+      </div>
+      <span class="badge-tag">Leaderboard</span>
+    </div>
+    <div class="card-body" style="padding: 1.25rem;">
+      <div class="leaderboard-list" id="leaderboard-container">
+        <div style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading leaderboard...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Admissions -->
+  <div class="card col-8">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-clock-rotate-left" style="color: var(--info);"></i>
+        Recent Students
+      </div>
+      <a href="/students" class="btn btn-secondary btn-sm">View All Directory</a>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Program</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody id="recent-students-tbody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading recent records...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

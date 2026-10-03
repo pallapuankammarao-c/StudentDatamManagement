@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Live Dashboard{% endblock %} — Student Analytics & Management Platform</title>
+  <meta name="description" content="Live interactive student data management and real-time performance analytics platform.">
+  
+  <!-- Favicon / Brand Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js 4 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  
+  <!-- Custom Design System Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <div id="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="/" class="brand-logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="brand-text">
+            Edu<span>Pulse</span>
+          </div>
+        </a>
+      </div>
+
+      <nav class="sidebar-menu">
+        <div class="menu-category">Overview & Insights</div>
+        <a href="/" class="nav-link {% if page == 'dashboard' %}active{% endif %}">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Live Dashboard</span>
+          <span class="nav-badge">Live</span>
+        </a>
+        <a href="/analytics" class="nav-link {% if page == 'analytics' %}active{% endif %}">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Deep Analytics</span>
+        </a>
+
+        <div class="menu-category">Student Records</div>
+        <a href="/students" class="nav-link {% if page == 'students' and mode != 'records' %}active{% endif %}">
+          <i class="fa-solid fa-users"></i>
+          <span>Directory</span>
+        </a>
+        <a href="/records" class="nav-link {% if page == 'records' or mode == 'records' %}active{% endif %}">
+          <i class="fa-solid fa-table-list"></i>
+          <span>Grades & Records</span>
+        </a>
+        <a href="/add-student" class="nav-link {% if page == 'add' %}active{% endif %}">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Add Student</span>
+        </a>
+
+        <div class="menu-category">System & Exports</div>
+        <a href="/settings" class="nav-link {% if page == 'settings' %}active{% endif %}">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Settings & Data</span>
+        </a>
+        <a href="/api/export/csv" class="nav-link" target="_blank" download>
+          <i class="fa-solid fa-file-csv"></i>
+          <span>Export CSV</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="public-status-card">
+          <div class="status-dot"></div>
+          <div class="status-info">
+            <div class="status-title">Live & Public Access</div>
+            <div class="status-desc">All updates sync instantly</div>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-sm btn-open-share" style="width: 100%;">
+          <i class="fa-solid fa-share-nodes"></i> Share Live Link
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="app-main">
+      <!-- Top Header Navigation -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="menu-toggle-btn" id="menu-toggle-btn" aria-label="Toggle navigation">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          
+          <div class="header-search-wrap">
+            <div class="header-search-bar">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="global-search-input" placeholder="Search ID, name, course, or email..." autocomplete="off">
+            </div>
+            <div class="search-results-dropdown" id="search-results-dropdown"></div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-surface); padding: 0.35rem 0.75rem; border-radius: var(--radius-full); border: 1px solid var(--border-subtle); font-size: 0.75rem; font-weight: 700; color: var(--success);" class="hide-mobile">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success);"></span>
+            LIVE PORTAL
+          </div>
+
+          <button class="btn btn-secondary btn-sm btn-open-share" title="Share Public Link">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            <span class="hide-mobile">Share Link</span>
+          </button>
+
+          <button class="btn-icon" id="theme-toggle-btn" title="Toggle Dark/Light Mode" aria-label="Toggle theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+
+          <div style="position: relative;">
+            <button class="btn-icon" id="notif-bell-btn" title="Notifications">
+              <i class="fa-solid fa-bell"></i>
+              <span class="notification-count"></span>
+            </button>
+            <div class="notifications-dropdown" id="notifications-dropdown">
+              <div class="dropdown-header">
+                <span>Recent Activity & Alerts</span>
+                <span style="font-size: 0.72rem; color: var(--primary); font-weight: 600;">Realtime</span>
+              </div>
+              <div class="notifications-list" id="notifications-list">
+                <div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                  Loading alerts...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <main class="content-body">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <!-- Share Public Link Modal -->
+  <div class="modal-overlay" id="share-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fa-solid fa-globe" style="color: var(--primary); margin-right: 0.5rem;"></i>
+          Public Live Dashboard Link
+        </div>
+        <button class="modal-close-btn btn-close-share" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+          Anyone with this link can open and view the live student dashboard, performance analytics, and records directly in their browser.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Current Dashboard URL</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" class="form-control" id="share-url-input" readonly style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;">
+            <button class="btn btn-primary" id="copy-live-link-btn">
+              <i class="fa-solid fa-copy"></i> Copy Link
+            </button>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-wifi" style="color: var(--secondary);"></i> How to share with others on the internet or local Wi-Fi:
+          </div>
+          <ul style="font-size: 0.82rem; color: var(--text-secondary); padding-left: 1.25rem; line-height: 1.6;">
+            <li><strong>On the same Wi-Fi / Local Network:</strong> Share your machine's IP address (e.g. <code>http://&lt;your-local-ip&gt;:5000</code>).</li>
+            <li><strong>Publicly over the Internet:</strong> Run a free Cloudflare Tunnel or ngrok to get a secure public HTTPS link that anyone worldwide can open!</li>
+            <li>Check the <a href="/settings" style="color: var(--primary); text-decoration: underline;">Settings & Sharing page</a> for 1-click terminal commands.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-close-share">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast Alerts Container -->
+  <div id="toast-container"></div>
+
+  <!-- Common Client Script -->
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

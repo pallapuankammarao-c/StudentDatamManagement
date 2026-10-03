@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}System Settings & Public Sharing Hub{% endblock %}
+
+{% block content %}
+<div style="max-width: 960px; margin: 0 auto;">
+  <div class="page-header">
+    <div class="page-title-wrap">
+      <h1><i class="fa-solid fa-sliders" style="color: var(--primary); margin-right: 0.4rem;"></i> Settings & Public Sharing Hub</h1>
+      <p>Configure public live links, export/import academic datasets, and inspect system telemetry.</p>
+    </div>
+  </div>
+
+  <!-- Public Sharing Hub Card -->
+  <div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary);">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-globe" style="color: var(--primary);"></i>
+        How to Share the Live Dashboard with Anyone (Public Link)
+      </div>
+      <span class="badge-status status-excellent">Public Ready</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.25rem;">
+        When you run this application, it starts on your machine. You can let anyone click a link and view this live dashboard in two easy ways:
+      </p>
+
+      <div class="charts-grid" style="margin-bottom: 0;">
+        <!-- Option 1: Local Wi-Fi / LAN -->
+        <div class="card col-6" style="background: var(--bg-surface-elevated);">
+          <div class="card-header" style="padding: 1rem 1.25rem;">
+            <div class="card-title" style="font-size: 0.95rem;">
+              <i class="fa-solid fa-wifi" style="color: var(--secondary);"></i> 1. On Same Wi-Fi / Local Network
+            </div>
+          </div>
+          <div class="card-body" style="padding: 1.25rem; font-size: 0.85rem; color: var(--text-secondary);">
+            <p style="margin-bottom: 0.75rem;">Anyone connected to the same Wi-Fi can open the dashboard using your computer's IP:</p>
+            <div style="background: var(--bg-app); border: 1px solid var(--border-subtle); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--text-primary); margin-bottom: 0.75rem;">
+              http://&lt;your-local-ip&gt;:5000
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">
+              Run <code>ipconfig</code> in Windows PowerShell to find your IPv4 Address (e.g. <code>192.168.1.15:5000</code>).
+            </p>
+          </div>
+        </div>
+
+        <!-- Option 2: Worldwide Public HTTPS Link -->
+        <div class="card col-6" style="background: var(--bg-surface-elevated);">
+          <div class="card-header" style="padding: 1rem 1.25rem;">
+            <div class="card-title" style="font-size: 0.95rem;">
+              <i class="fa-solid fa-cloud-arrow-up" style="color: var(--primary);"></i> 2. Worldwide Public Link (Free)
+            </div>
+          </div>
+          <div class="card-body" style="padding: 1.25rem; font-size: 0.85rem; color: var(--text-secondary);">
+            <p style="margin-bottom: 0.75rem;">Generate an instant, secure public HTTPS URL for anyone in the world:</p>
+            <div style="position: relative; margin-bottom: 0.75rem;">
+              <div style="background: var(--bg-app); border: 1px solid var(--border-subtle); padding: 0.6rem 0.85rem; border-radius: var(--radius-sm); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-primary);">
+                npx localtunnel --port 5000
+              </div>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-muted);">
+              Or with Cloudflare Tunnel (no install needed):<br>
+              <code>ssh -R 80:localhost:5000 localhost.run</code>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Management: Export & Import -->
+  <div class="charts-grid">
+    <!-- Export -->
+    <div class="card col-6">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-file-export" style="color: var(--success);"></i> Export Records
+        </div>
+      </div>
+      <div class="card-body">
+        <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+          Download full student datasets for external analysis, reporting, or archival.
+        </p>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="/api/export/csv" class="btn btn-secondary" download>
+            <i class="fa-solid fa-file-csv" style="color: var(--success);"></i> Download CSV
+          </a>
+          <a href="/api/export/json" class="btn btn-secondary" download>
+            <i class="fa-solid fa-code" style="color: var(--info);"></i> Download JSON
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import -->
+    <div class="card col-6">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-file-import" style="color: var(--warning);"></i> Import JSON Dataset
+        </div>
+      </div>
+      <div class="card-body">
+        <form id="import-json-form">
+          <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem;">
+            Upload a JSON file containing a <code>{"records": [...]}</code> array to import in bulk.
+          </p>
+          <div class="form-group">
+            <input type="file" id="import-file" class="form-control" accept=".json" required>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; cursor: pointer;">
+              <input type="checkbox" id="overwrite-checkbox"> Overwrite existing student IDs
+            </label>
+            <button type="submit" class="btn btn-primary btn-sm" id="btn-import-submit">
+              <i class="fa-solid fa-upload"></i> Import File
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Information -->
+  <div class="card" style="margin-top: 2rem;">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-server" style="color: var(--text-muted);"></i> System Architecture & Telemetry
+      </div>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="custom-table">
+          <tbody>
+            <tr>
+              <td style="font-weight: 600; width: 220px;">Backend Framework</td>
+              <td>Python 3.10 + Flask REST API (JSON)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Data Processing Engine</td>
+              <td>Pandas Analytics Layer (Aggregation & Frequency Analysis)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Database Engine</td>
+              <td>SQLite 3 (<code>students.db</code> with WAL mode)</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Frontend UI Stack</td>
+              <td>HTML5, Responsive Vanilla CSS Design System, Chart.js 4, FontAwesome 6</td>
+            </tr>
+            <tr>
+              <td style="font-weight: 600;">Passing Benchmark</td>
+              <td>&ge; 40% (Grades: Excellent &ge; 90%, Good 70-89%, Average 60-69%, Needs Improvement &lt; 60%)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const importForm = document.getElementById('import-json-form');
+  const fileInput = document.getElementById('import-file');
+  const overwriteCheck = document.getElementById('overwrite-checkbox');
+  const submitBtn = document.getElementById('btn-import-submit');
+
+  if (importForm) {
+    importForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Importing...';
+
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+        const records = Array.isArray(json) ? json : json.records;
+
+        if (!Array.isArray(records)) {
+          throw new Error('File must be a JSON array or object with a "records" key.');
+        }
+
+        const res = await fetch('/api/import/json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            records: records,
+            overwrite: overwriteCheck.checked
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Import failed');
+        }
+
+        showToast(`Successfully imported: ${data.inserted} added, ${data.updated} updated!`, 'success');
+        fileInput.value = '';
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fa-solid fa-upload"></i> Import File';
+      }
+    });
+  }
+});
+</script>
+{% endblock %}
