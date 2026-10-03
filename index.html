@@ -11,18 +11,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- FontAwesome 6 -->
+  <!-- FontAwesome 6 CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-  <!-- Chart.js 4 -->
+  <!-- Chart.js 4 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
   <style>
     :root {
       --bg-app: #f8fafc;
       --bg-surface: #ffffff;
-      --bg-surface-elevated: #f1f5f9;
-      --bg-surface-hover: #e2e8f0;
+      --bg-surface-elevated: #ffffff;
+      --bg-surface-hover: #f1f5f9;
+      --bg-surface-glass: rgba(255, 255, 255, 0.85);
       --text-primary: #0f172a;
       --text-secondary: #475569;
       --text-muted: #94a3b8;
@@ -30,6 +31,7 @@
       --border-strong: #cbd5e1;
       --border-focus: #6366f1;
       --primary: #4f46e5;
+      --primary-hover: #4338ca;
       --primary-light: #eef2ff;
       --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       --secondary: #06b6d4;
@@ -40,14 +42,19 @@
       --warning-light: #fffbeb;
       --danger: #ef4444;
       --danger-light: #fef2f2;
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-      --shadow-glow: 0 0 25px rgba(79, 70, 229, 0.25);
+      --info: #3b82f6;
+      --info-light: #eff6ff;
+      --sidebar-width: 260px;
+      --header-height: 70px;
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
       --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --shadow-glow: 0 0 25px rgba(79, 70, 229, 0.25);
       --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -56,6 +63,7 @@
       --bg-surface: #111827;
       --bg-surface-elevated: #1f2937;
       --bg-surface-hover: #1e293b;
+      --bg-surface-glass: rgba(17, 24, 39, 0.85);
       --text-primary: #f8fafc;
       --text-secondary: #cbd5e1;
       --text-muted: #64748b;
@@ -63,6 +71,7 @@
       --border-strong: #334155;
       --border-focus: #818cf8;
       --primary: #6366f1;
+      --primary-hover: #4f46e5;
       --primary-light: rgba(99, 102, 241, 0.15);
       --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
       --secondary: #22d3ee;
@@ -73,9 +82,12 @@
       --warning-light: rgba(251, 191, 36, 0.12);
       --danger: #f87171;
       --danger-light: rgba(248, 113, 113, 0.12);
+      --info: #60a5fa;
+      --info-light: rgba(96, 165, 250, 0.12);
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
       --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
       --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6);
+      --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.7);
       --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.35);
     }
 
@@ -86,67 +98,288 @@
       color: var(--text-primary);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
+      overflow-x: hidden;
       transition: background 0.3s ease, color 0.3s ease;
     }
 
-    /* Top Navigation */
-    .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
+    a { color: inherit; text-decoration: none; }
+
+    /* Layout Structure */
+    #app-container { display: flex; width: 100%; min-height: 100vh; }
+
+    /* Exact Sidebar Matching Screenshot */
+    .app-sidebar {
+      width: var(--sidebar-width);
       background: var(--bg-surface);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 0.85rem 2rem;
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+      transition: var(--transition);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar-header {
+      height: var(--header-height);
+      padding: 0 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
     }
-    .brand {
+
+    .brand-logo {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       font-weight: 800;
       font-size: 1.25rem;
-      text-decoration: none;
-      color: var(--text-primary);
+      letter-spacing: -0.02em;
     }
-    .brand-icon {
-      width: 40px;
-      height: 40px;
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
       border-radius: var(--radius-md);
       background: var(--primary-gradient);
-      color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #fff;
+      font-size: 1.1rem;
       box-shadow: var(--shadow-glow);
     }
-    .brand-name span {
+
+    .brand-text span {
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .nav-actions {
+
+    .sidebar-menu {
+      flex: 1;
+      padding: 1.25rem 0.75rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .menu-category {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      padding: 0.75rem 0.75rem 0.35rem;
+    }
+
+    .nav-link {
       display: flex;
       align-items: center;
+      gap: 0.9rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-weight: 500;
+      transition: var(--transition);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-link i {
+      font-size: 1.1rem;
+      width: 22px;
+      text-align: center;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .nav-link:hover {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-link:hover i { color: var(--primary); }
+
+    .nav-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .nav-link.active i { color: var(--primary); }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: var(--radius-full);
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .sidebar-footer {
+      padding: 1.25rem 1rem;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
       gap: 0.75rem;
     }
+
+    .public-status-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 1; box-shadow: 0 0 14px var(--success); }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .status-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .status-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Workspace */
+    .app-main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      transition: var(--transition);
+    }
+
+    /* Header */
+    .app-header {
+      height: var(--header-height);
+      background: var(--bg-surface-glass);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+      max-width: 480px;
+    }
+
+    .menu-toggle-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .header-search-wrap { position: relative; width: 100%; }
+
+    .header-search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--bg-app);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 0.45rem 1rem;
+      width: 100%;
+      transition: var(--transition);
+    }
+
+    .header-search-bar:focus-within {
+      border-color: var(--border-focus);
+      background: var(--bg-surface);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    .header-search-bar i { color: var(--text-muted); margin-right: 0.65rem; }
+    .header-search-bar input {
+      border: none; background: transparent; outline: none; width: 100%; color: var(--text-primary); font-size: 0.88rem;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      max-height: 380px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+    }
+    .search-results-dropdown.show { display: block; }
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .search-result-item:hover { background: var(--bg-surface-hover); }
+
+    .header-right { display: flex; align-items: center; gap: 0.75rem; }
 
     /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: var(--radius-md);
-      font-size: 0.85rem;
+      padding: 0.55rem 1.15rem;
       font-weight: 600;
-      cursor: pointer;
+      font-size: 0.88rem;
+      border-radius: var(--radius-md);
       border: 1px solid transparent;
+      cursor: pointer;
       transition: var(--transition);
-      text-decoration: none;
+      white-space: nowrap;
     }
     .btn-primary {
       background: var(--primary-gradient);
@@ -159,19 +392,21 @@
     }
     .btn-secondary {
       background: var(--bg-surface-elevated);
-      border-color: var(--border-subtle);
+      border: 1px solid var(--border-subtle);
       color: var(--text-primary);
     }
     .btn-secondary:hover {
       background: var(--bg-surface-hover);
       border-color: var(--border-strong);
     }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
     .btn-icon {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-md);
-      background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
       color: var(--text-secondary);
       display: flex;
       align-items: center;
@@ -179,27 +414,21 @@
       cursor: pointer;
       transition: var(--transition);
     }
-    .btn-icon:hover {
-      background: var(--bg-surface-hover);
-      color: var(--text-primary);
-    }
-    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
-    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-icon:hover { background: var(--bg-surface-hover); color: var(--text-primary); }
 
-    /* Layout */
-    .container {
-      max-width: 1380px;
-      margin: 0 auto;
-      padding: 2rem;
-      width: 100%;
-      flex: 1;
-    }
+    /* Content Area */
+    .content-body { padding: 2rem; flex: 1; }
+
+    /* Tab Views */
+    .tab-view { display: none; }
+    .tab-view.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     /* Public Banner */
     .public-banner {
       background: var(--primary-gradient);
       border-radius: var(--radius-lg);
-      padding: 1.5rem 2rem;
+      padding: 1.35rem 1.75rem;
       color: #fff;
       display: flex;
       align-items: center;
@@ -212,28 +441,32 @@
     .public-banner::before {
       content: "";
       position: absolute;
-      top: -60%;
+      top: -50%;
       right: -10%;
-      width: 340px;
-      height: 340px;
-      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%);
       border-radius: 50%;
-    }
-    .banner-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(255,255,255,0.2);
-      padding: 0.2rem 0.65rem;
-      border-radius: var(--radius-full);
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      pointer-events: none;
     }
 
-    /* Cards */
+    /* Page Header */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .page-title-wrap h1 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .page-title-wrap p { color: var(--text-secondary); font-size: 0.92rem; margin-top: 0.25rem; }
+
+    /* Cards & Grid */
     .card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
@@ -243,8 +476,8 @@
       overflow: hidden;
     }
     .card:hover {
-      border-color: var(--border-strong);
       box-shadow: var(--shadow-md);
+      border-color: var(--border-strong);
     }
     .card-header {
       padding: 1.15rem 1.5rem;
@@ -258,11 +491,11 @@
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
     }
     .card-body { padding: 1.5rem; }
 
-    /* Metrics Grid */
+    /* Metric Cards */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
@@ -273,7 +506,7 @@
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
+      padding: 1.25rem 1.35rem;
       transition: var(--transition);
     }
     .metric-card:hover {
@@ -281,19 +514,8 @@
       box-shadow: var(--shadow-lg);
       border-color: var(--border-strong);
     }
-    .metric-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 0.75rem;
-    }
-    .metric-label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
+    .metric-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .metric-label { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
     .metric-icon-wrap {
       width: 42px;
       height: 42px;
@@ -313,13 +535,13 @@
     .metric-footer {
       margin-top: 0.65rem;
       font-size: 0.78rem;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
-    /* Charts Grid */
+    /* Charts */
     .charts-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -330,51 +552,44 @@
     .col-4 { grid-column: span 4; }
     .col-6 { grid-column: span 6; }
     .col-12 { grid-column: span 12; }
-    .chart-wrapper { position: relative; height: 280px; width: 100%; }
+    .chart-wrapper { position: relative; width: 100%; height: 280px; }
 
-    /* Tables */
+    /* Tables & Badges */
     .table-responsive { width: 100%; overflow-x: auto; }
-    .custom-table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      text-align: left;
-    }
+    .custom-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
     .custom-table th {
       background: var(--bg-surface-elevated);
-      padding: 0.85rem 1.15rem;
-      font-size: 0.75rem;
+      padding: 0.9rem 1.15rem;
+      font-size: 0.78rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
       color: var(--text-muted);
       border-bottom: 1px solid var(--border-subtle);
       white-space: nowrap;
     }
     .custom-table td {
-      padding: 0.95rem 1.15rem;
+      padding: 1rem 1.15rem;
       font-size: 0.88rem;
       border-bottom: 1px solid var(--border-subtle);
       vertical-align: middle;
     }
     .custom-table tbody tr:hover { background: var(--bg-surface-hover); }
 
-    /* Badges */
     .badge-status {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.2rem 0.65rem;
+      padding: 0.25rem 0.65rem;
       border-radius: var(--radius-full);
       font-size: 0.75rem;
       font-weight: 700;
     }
     .status-excellent { background: var(--success-light); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.25); }
-    .status-good { background: rgba(59, 130, 246, 0.12); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.25); }
+    .status-good { background: var(--info-light); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.25); }
     .status-average { background: var(--warning-light); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.25); }
     .status-needs-improvement { background: var(--danger-light); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); }
     .badge-tag {
-      background: var(--bg-surface-elevated);
+      background: var(--bg-surface-hover);
       color: var(--text-secondary);
       border: 1px solid var(--border-subtle);
       padding: 0.2rem 0.5rem;
@@ -383,8 +598,7 @@
       font-weight: 600;
     }
 
-    /* Student Cell */
-    .student-cell { display: flex; align-items: center; gap: 0.85rem; }
+    .student-cell { display: flex; align-items: center; gap: 0.85rem; cursor: pointer; }
     .student-avatar {
       width: 38px;
       height: 38px;
@@ -395,14 +609,13 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       flex-shrink: 0;
       border: 2px solid var(--border-subtle);
     }
-    .student-name { font-weight: 600; color: var(--text-primary); cursor: pointer; }
+    .student-name { font-weight: 600; color: var(--text-primary); }
     .student-id { font-size: 0.74rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
 
-    /* Progress bar */
     .score-cell { display: flex; align-items: center; gap: 0.75rem; }
     .progress-track {
       flex: 1;
@@ -418,27 +631,25 @@
     .leader-item {
       display: flex;
       align-items: center;
-      gap: 0.9rem;
+      gap: 1rem;
       padding: 0.85rem 1rem;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-subtle);
       background: var(--bg-surface-elevated);
       margin-bottom: 0.75rem;
+      cursor: pointer;
       transition: var(--transition);
     }
-    .leader-item:hover {
-      transform: translateX(4px);
-      border-color: var(--border-strong);
-    }
+    .leader-item:hover { transform: translateX(4px); border-color: var(--border-strong); }
     .rank-badge {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       flex-shrink: 0;
     }
     .rank-1 { background: #fef08a; color: #854d0e; }
@@ -447,11 +658,11 @@
     .rank-other { background: var(--bg-surface-hover); color: var(--text-muted); }
 
     /* Forms */
-    .form-group { margin-bottom: 1.15rem; }
-    .form-label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.35rem; color: var(--text-primary); }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 0.45rem; }
     .form-control {
       width: 100%;
-      padding: 0.6rem 0.85rem;
+      padding: 0.65rem 0.95rem;
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
@@ -463,8 +674,10 @@
       border-color: var(--border-focus);
       box-shadow: 0 0 0 3px var(--primary-light);
     }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem; }
 
-    /* Modal */
+    /* Modals */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -483,7 +696,7 @@
       border-radius: var(--radius-lg);
       width: 100%;
       max-width: 600px;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-xl);
       overflow: hidden;
       animation: modalPop 0.25s ease;
     }
@@ -492,7 +705,7 @@
       to { opacity: 1; transform: scale(1); }
     }
     .modal-header {
-      padding: 1.15rem 1.5rem;
+      padding: 1.25rem 1.5rem;
       border-bottom: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
@@ -509,264 +722,589 @@
       background: var(--bg-surface-elevated);
     }
 
-    /* Toast */
     #toast-container {
       position: fixed;
       bottom: 1.5rem;
       right: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.75rem;
       z-index: 2000;
     }
     .toast {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
-      padding: 0.75rem 1.15rem;
+      padding: 0.85rem 1.25rem;
       box-shadow: var(--shadow-lg);
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      min-width: 260px;
+      gap: 0.75rem;
+      min-width: 280px;
       animation: slideIn 0.3s ease;
     }
     @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border-subtle);
-      background: var(--bg-surface);
-      padding: 1.5rem 2rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: auto;
-    }
 
     @media (max-width: 1024px) {
       .col-8, .col-4, .col-6 { grid-column: span 12; }
     }
     @media (max-width: 768px) {
-      .container { padding: 1rem; }
-      .public-banner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .app-sidebar { transform: translateX(-100%); }
+      .app-sidebar.open { transform: translateX(0); }
+      .app-main { margin-left: 0; }
+      .menu-toggle-btn { display: block; }
+      .app-header { padding: 0 1rem; }
+      .content-body { padding: 1.25rem; }
       .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+      .public-banner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+      .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <!-- Top Navigation Bar -->
-  <nav class="top-nav">
-    <a href="#" class="brand">
-      <div class="brand-icon">
-        <i class="fa-solid fa-graduation-cap"></i>
+  <div id="app-container">
+    <!-- Sidebar Matching Exactly User Screenshot -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="#dashboard" class="brand-logo" onclick="switchTab('dashboard')">
+          <div class="logo-icon">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div class="brand-text">Edu<span>Pulse</span></div>
+        </a>
       </div>
-      <div class="brand-name">Edu<span>Pulse</span></div>
-    </a>
 
-    <div class="nav-actions">
-      <div style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-surface-elevated); padding: 0.35rem 0.75rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 700; color: var(--success);">
-        <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success);"></span>
-        LIVE ANALYTICS
-      </div>
-      <button class="btn btn-secondary btn-sm" onclick="exportDataCSV()">
-        <i class="fa-solid fa-file-csv"></i> Export CSV
-      </button>
-      <button class="btn btn-primary btn-sm" onclick="openAddStudentModal()">
-        <i class="fa-solid fa-plus"></i> Add Student
-      </button>
-      <button class="btn-icon" id="theme-btn" onclick="toggleTheme()" title="Toggle Theme">
-        <i class="fa-solid fa-sun"></i>
-      </button>
-      <a href="https://github.com/pallapuankammarao-c/StudentDatamManagement" target="_blank" class="btn-icon" title="View GitHub Repository">
-        <i class="fa-brands fa-github"></i>
-      </a>
-    </div>
-  </nav>
+      <nav class="sidebar-menu">
+        <div class="menu-category">OVERVIEW & INSIGHTS</div>
+        <button class="nav-link active" id="nav-dashboard" onclick="switchTab('dashboard')">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Live Dashboard</span>
+          <span class="nav-badge">Live</span>
+        </button>
+        <button class="nav-link" id="nav-analytics" onclick="switchTab('analytics')">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Deep Analytics</span>
+        </button>
 
-  <!-- Main Container -->
-  <main class="container">
-    <!-- Hero Banner -->
-    <div class="public-banner">
-      <div style="position: relative; z-index: 2;">
-        <div class="banner-badge">
-          <i class="fa-solid fa-globe"></i> Live Web Analytics Platform
+        <div class="menu-category">STUDENT RECORDS</div>
+        <button class="nav-link" id="nav-directory" onclick="switchTab('directory')">
+          <i class="fa-solid fa-users"></i>
+          <span>Directory</span>
+        </button>
+        <button class="nav-link" id="nav-records" onclick="switchTab('records')">
+          <i class="fa-solid fa-table-list"></i>
+          <span>Grades & Records</span>
+        </button>
+        <button class="nav-link" id="nav-add-student" onclick="switchTab('add-student')">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Add Student</span>
+        </button>
+
+        <div class="menu-category">SYSTEM & EXPORTS</div>
+        <button class="nav-link" id="nav-settings" onclick="switchTab('settings')">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Settings & Data</span>
+        </button>
+        <button class="nav-link" onclick="exportDataCSV()">
+          <i class="fa-solid fa-file-csv"></i>
+          <span>Export CSV</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer matching screenshot -->
+      <div class="sidebar-footer">
+        <div class="public-status-card">
+          <div class="status-dot"></div>
+          <div class="status-info">
+            <div class="status-title">Live & Public Access</div>
+            <div class="status-desc">All updates sync instantly</div>
+          </div>
         </div>
-        <h1 style="font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em;">Smart Student Data & Academic Insights Hub</h1>
-        <p style="opacity: 0.9; font-size: 0.92rem; margin-top: 0.35rem;">Real-time performance tracking, course distribution, grade analytics, and leaderboard.</p>
-      </div>
-      <div style="display: flex; gap: 0.75rem; z-index: 2;">
-        <button class="btn" style="background: #fff; color: var(--primary); font-weight: 700;" onclick="resetSampleData()">
-          <i class="fa-solid fa-rotate-left"></i> Reset Sample Data
+        <button class="btn btn-primary btn-sm" onclick="openShareModal()" style="width: 100%;">
+          <i class="fa-solid fa-share-nodes"></i> Share Live Link
         </button>
       </div>
-    </div>
+    </aside>
 
-    <!-- 5 Metrics Cards -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Total Enrolled</span>
-          <div class="metric-icon-wrap" style="background: var(--primary-light); color: var(--primary);"><i class="fa-solid fa-user-graduate"></i></div>
-        </div>
-        <div class="metric-value" id="kpi-total">18</div>
-        <div class="metric-footer"><span class="badge-status status-excellent">Active</span> Enrolled Students</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Class Average</span>
-          <div class="metric-icon-wrap" style="background: var(--secondary-light); color: var(--secondary);"><i class="fa-solid fa-chart-simple"></i></div>
-        </div>
-        <div class="metric-value" id="kpi-avg">73.6%</div>
-        <div class="metric-footer"><span class="badge-status status-good">Mean</span> Academic Score</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Pass Rate</span>
-          <div class="metric-icon-wrap" style="background: var(--success-light); color: var(--success);"><i class="fa-solid fa-shield-halved"></i></div>
-        </div>
-        <div class="metric-value" id="kpi-pass">94.4%</div>
-        <div class="metric-footer"><span class="badge-status status-excellent">&ge; 40%</span> Passing Grade</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Peak Score</span>
-          <div class="metric-icon-wrap" style="background: var(--warning-light); color: var(--warning);"><i class="fa-solid fa-trophy"></i></div>
-        </div>
-        <div class="metric-value" id="kpi-top">96.0%</div>
-        <div class="metric-footer"><span class="badge-status status-average">Top Mark</span> Valedictorian</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-top">
-          <span class="metric-label">Departments</span>
-          <div class="metric-icon-wrap" style="background: rgba(236,72,153,0.12); color: #ec4899;"><i class="fa-solid fa-building-columns"></i></div>
-        </div>
-        <div class="metric-value" id="kpi-courses">8</div>
-        <div class="metric-footer"><span class="badge-status status-good">Tracks</span> Engineering & Tech</div>
-      </div>
-    </div>
-
-    <!-- 4 Interactive Charts -->
-    <div class="charts-grid">
-      <div class="card col-8">
-        <div class="card-header">
-          <div class="card-title"><i class="fa-solid fa-arrow-trend-up" style="color: var(--primary);"></i> Academic Score Trend Over Time</div>
-          <span class="badge-tag">Monthly Average</span>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrapper"><canvas id="chartTrend"></canvas></div>
-        </div>
-      </div>
-
-      <div class="card col-4">
-        <div class="card-header">
-          <div class="card-title"><i class="fa-solid fa-chart-pie" style="color: var(--secondary);"></i> Course Distribution</div>
-          <span class="badge-tag">Enrollment</span>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrapper"><canvas id="chartCourse"></canvas></div>
-        </div>
-      </div>
-
-      <div class="card col-6">
-        <div class="card-header">
-          <div class="card-title"><i class="fa-solid fa-bars-staggered" style="color: var(--success);"></i> Grade Tier Distribution</div>
-          <span class="badge-tag">5 Performance Tiers</span>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrapper"><canvas id="chartMarks"></canvas></div>
-        </div>
-      </div>
-
-      <div class="card col-6">
-        <div class="card-header">
-          <div class="card-title"><i class="fa-solid fa-chart-column" style="color: var(--warning);"></i> Department Average Performance</div>
-          <span class="badge-tag">Score Comparison</span>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrapper"><canvas id="chartAvg"></canvas></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom: Leaderboard & Records -->
-    <div class="charts-grid">
-      <!-- Leaderboard -->
-      <div class="card col-4">
-        <div class="card-header">
-          <div class="card-title"><i class="fa-solid fa-crown" style="color: #eab308;"></i> Top 5 Leaderboard</div>
-          <span class="badge-tag">Highest Scores</span>
-        </div>
-        <div class="card-body" id="leaderboard-body"></div>
-      </div>
-
-      <!-- Live Records Table with Dual View & Filters -->
-      <div class="card col-8">
-        <div class="card-header">
-          <div class="card-title"><i class="fa-solid fa-users" style="color: var(--primary);"></i> Student Records Directory</div>
-          <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <div style="display: flex; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 2px;">
-              <button class="btn btn-sm" id="view-table-btn" style="background: var(--primary); color: #fff; padding: 0.35rem 0.65rem;" onclick="setViewMode('table')"><i class="fa-solid fa-list"></i></button>
-              <button class="btn btn-sm" id="view-grid-btn" style="background: transparent; color: var(--text-secondary); padding: 0.35rem 0.65rem;" onclick="setViewMode('grid')"><i class="fa-solid fa-grip"></i></button>
+    <!-- Main Workspace -->
+    <div class="app-main">
+      <!-- Top Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="menu-toggle-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+          <div class="header-search-wrap">
+            <div class="header-search-bar">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="global-search" placeholder="Search ID, name, course, or email..." oninput="handleGlobalSearch(event)" autocomplete="off">
             </div>
-            <button class="btn btn-primary btn-sm" onclick="openAddStudentModal()"><i class="fa-solid fa-plus"></i> Add</button>
+            <div class="search-results-dropdown" id="global-search-dropdown"></div>
           </div>
         </div>
 
-        <!-- Filter bar -->
-        <div style="padding: 1rem 1.5rem; background: var(--bg-surface-elevated); border-bottom: 1px solid var(--border-subtle); display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.65rem;">
-          <input type="text" id="table-search" class="form-control" placeholder="Search name, ID, email..." oninput="applyFilters()" style="grid-column: span 2;">
-          <select id="filter-course" class="form-control" onchange="applyFilters()">
-            <option value="">All Courses</option>
-            <option value="CSE">CSE</option>
-            <option value="ECE">ECE</option>
-            <option value="EEE">EEE</option>
-            <option value="MECH">MECH</option>
-            <option value="CIVIL">CIVIL</option>
-            <option value="IT">IT</option>
-            <option value="AIML">AIML</option>
-            <option value="DS">DS</option>
-          </select>
-          <select id="filter-status" class="form-control" onchange="applyFilters()">
-            <option value="">All Status</option>
-            <option value="Excellent">Excellent</option>
-            <option value="Good">Good</option>
-            <option value="Average">Average</option>
-            <option value="Needs Improvement">Needs Improvement</option>
-          </select>
-          <select id="filter-sort" class="form-control" onchange="applyFilters()">
-            <option value="marks-desc">Marks: High to Low</option>
-            <option value="marks-asc">Marks: Low to High</option>
-            <option value="name-asc">Name: A to Z</option>
-            <option value="created_at-desc">Newest First</option>
-          </select>
-        </div>
-
-        <!-- Table View -->
-        <div class="card-body" id="table-view-container" style="padding: 0;">
-          <div class="table-responsive">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Student</th>
-                  <th>Course & Year</th>
-                  <th>Marks</th>
-                  <th>Status</th>
-                  <th style="text-align: right;">Action</th>
-                </tr>
-              </thead>
-              <tbody id="students-tbody"></tbody>
-            </table>
+        <div class="header-right">
+          <div style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-surface); padding: 0.35rem 0.75rem; border-radius: var(--radius-full); border: 1px solid var(--border-subtle); font-size: 0.75rem; font-weight: 700; color: var(--success);">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success);"></span>
+            LIVE HUB
           </div>
+          <button class="btn btn-secondary btn-sm" onclick="openShareModal()">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Share Link
+          </button>
+          <button class="btn-icon" id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Theme">
+            <i class="fa-solid fa-sun"></i>
+          </button>
+          <a href="https://github.com/pallapuankammarao-c/StudentDatamManagement" target="_blank" class="btn-icon" title="GitHub Repository">
+            <i class="fa-brands fa-github"></i>
+          </a>
         </div>
+      </header>
 
-        <!-- Grid View -->
-        <div id="grid-view-container" style="display: none; padding: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;"></div>
-      </div>
+      <!-- Main Content Dynamic Body -->
+      <main class="content-body">
+
+        <!-- ===============================================================
+             TAB 1: LIVE DASHBOARD
+             =============================================================== -->
+        <section class="tab-view active" id="view-dashboard">
+          <!-- Hero Banner -->
+          <div class="public-banner">
+            <div>
+              <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.2); padding: 0.2rem 0.65rem; border-radius: var(--radius-full); font-size: 0.75rem; font-weight: 700; margin-bottom: 0.6rem;">
+                <i class="fa-solid fa-satellite-dish"></i> Public Live Analytics Dashboard
+              </div>
+              <h2 style="font-size: 1.45rem; font-weight: 800;">Smart Student Data & Academic Performance Hub</h2>
+              <p style="opacity: 0.9; font-size: 0.88rem; margin-top: 0.25rem;">Comprehensive real-time tracking of academic performance, course distributions, and student outcomes.</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn" style="background: #fff; color: var(--primary); font-weight: 700;" onclick="openShareModal()">
+                <i class="fa-solid fa-share-nodes"></i> Share Live Link
+              </button>
+              <button class="btn btn-primary" onclick="switchTab('add-student')">
+                <i class="fa-solid fa-user-plus"></i> Add Student
+              </button>
+            </div>
+          </div>
+
+          <!-- 5 Metric Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Total Enrolled</span>
+                <div class="metric-icon-wrap" style="background: var(--primary-light); color: var(--primary);"><i class="fa-solid fa-user-graduate"></i></div>
+              </div>
+              <div class="metric-value" id="kpi-dash-total">18</div>
+              <div class="metric-footer"><span class="badge-status status-excellent">Active</span> Registered in system</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Class Average</span>
+                <div class="metric-icon-wrap" style="background: var(--secondary-light); color: var(--secondary);"><i class="fa-solid fa-chart-simple"></i></div>
+              </div>
+              <div class="metric-value" id="kpi-dash-avg">73.6%</div>
+              <div class="metric-footer"><span class="badge-status status-good">Overall</span> Mean academic score</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Pass Rate</span>
+                <div class="metric-icon-wrap" style="background: var(--success-light); color: var(--success);"><i class="fa-solid fa-shield-halved"></i></div>
+              </div>
+              <div class="metric-value" id="kpi-dash-pass">94.4%</div>
+              <div class="metric-footer"><span class="badge-status status-excellent">&ge; 40%</span> Passing benchmark</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Top Score</span>
+                <div class="metric-icon-wrap" style="background: var(--warning-light); color: var(--warning);"><i class="fa-solid fa-trophy"></i></div>
+              </div>
+              <div class="metric-value" id="kpi-dash-top">96.0%</div>
+              <div class="metric-footer"><span class="badge-status status-average">Peak Grade</span> Valedictorian</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-top">
+                <span class="metric-label">Departments</span>
+                <div class="metric-icon-wrap" style="background: var(--danger-light); color: var(--danger);"><i class="fa-solid fa-building-columns"></i></div>
+              </div>
+              <div class="metric-value" id="kpi-dash-courses">8</div>
+              <div class="metric-footer"><span class="badge-status status-good">8 Tracks</span> Engineering & Tech</div>
+            </div>
+          </div>
+
+          <!-- 4 Interactive Charts -->
+          <div class="charts-grid">
+            <div class="card col-8">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-arrow-trend-up" style="color: var(--primary);"></i> Academic Performance Trend Over Time</div>
+                <span class="badge-tag">Monthly Average</span>
+              </div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="dashChartTrend"></canvas></div></div>
+            </div>
+
+            <div class="card col-4">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-chart-pie" style="color: var(--secondary);"></i> Course Enrollment</div>
+                <span class="badge-tag">Breakdown</span>
+              </div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="dashChartCourse"></canvas></div></div>
+            </div>
+
+            <div class="card col-6">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-layer-group" style="color: var(--success);"></i> Grade Band Distribution</div>
+                <span class="badge-tag">5 Performance Tiers</span>
+              </div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="dashChartMarks"></canvas></div></div>
+            </div>
+
+            <div class="card col-6">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-chart-column" style="color: var(--warning);"></i> Average Score by Course</div>
+                <span class="badge-tag">Comparative</span>
+              </div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="dashChartAvg"></canvas></div></div>
+            </div>
+          </div>
+
+          <!-- Bottom: Leaderboard & Recent Students -->
+          <div class="charts-grid">
+            <div class="card col-4">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-crown" style="color: #eab308;"></i> Top Performing Students</div>
+                <span class="badge-tag">Leaderboard</span>
+              </div>
+              <div class="card-body" id="dash-leaderboard"></div>
+            </div>
+
+            <div class="card col-8">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color: var(--info);"></i> Recent Students</div>
+                <button class="btn btn-secondary btn-sm" onclick="switchTab('directory')">View All Directory</button>
+              </div>
+              <div class="card-body" style="padding: 0;">
+                <div class="table-responsive">
+                  <table class="custom-table">
+                    <thead>
+                      <tr>
+                        <th>Student</th>
+                        <th>Program</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                        <th style="text-align: right;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dash-recent-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===============================================================
+             TAB 2: DEEP ANALYTICS
+             =============================================================== -->
+        <section class="tab-view" id="view-analytics">
+          <div class="page-header">
+            <div class="page-title-wrap">
+              <h1><i class="fa-solid fa-chart-line" style="color: var(--primary);"></i> Academic Analytics & Intelligence</h1>
+              <p>Statistical cohort analysis computed across grade bands, department performance, and demographic trends.</p>
+            </div>
+            <div class="page-actions">
+              <button class="btn btn-secondary btn-sm" onclick="exportDataCSV()"><i class="fa-solid fa-download"></i> Export Dataset</button>
+              <button class="btn btn-primary btn-sm" onclick="switchTab('dashboard')"><i class="fa-solid fa-arrow-left"></i> Dashboard</button>
+            </div>
+          </div>
+
+          <!-- 6 Deep Analytics Charts -->
+          <div class="charts-grid">
+            <div class="card col-8">
+              <div class="card-header"><div class="card-title"><i class="fa-solid fa-arrow-trend-up" style="color: var(--primary);"></i> Cohort Score Progression Over Time</div><span class="badge-tag">Time Series</span></div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="anChartTrend"></canvas></div></div>
+            </div>
+            <div class="card col-4">
+              <div class="card-header"><div class="card-title"><i class="fa-solid fa-chart-pie" style="color: var(--secondary);"></i> Course Enrollment Ratio</div><span class="badge-tag">Departments</span></div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="anChartCourse"></canvas></div></div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header"><div class="card-title"><i class="fa-solid fa-chart-simple" style="color: #8b5cf6;"></i> Performance Comparison by Department</div><span class="badge-tag">Mean Score</span></div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="anChartAvg"></canvas></div></div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header"><div class="card-title"><i class="fa-solid fa-bars-staggered" style="color: var(--success);"></i> Student Grade Tier Distribution</div><span class="badge-tag">5 Performance Tiers</span></div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="anChartMarks"></canvas></div></div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header"><div class="card-title"><i class="fa-solid fa-venus-mars" style="color: #ec4899;"></i> Gender Representation</div><span class="badge-tag">Demographics</span></div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="anChartGender"></canvas></div></div>
+            </div>
+            <div class="card col-6">
+              <div class="card-header"><div class="card-title"><i class="fa-solid fa-calendar-days" style="color: var(--secondary);"></i> Enrollment by Academic Year</div><span class="badge-tag">Years 1 - 4</span></div>
+              <div class="card-body"><div class="chart-wrapper"><canvas id="anChartYear"></canvas></div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===============================================================
+             TAB 3 & 4: STUDENT DIRECTORY / GRADES & RECORDS
+             =============================================================== -->
+        <section class="tab-view" id="view-directory">
+          <div class="page-header">
+            <div class="page-title-wrap">
+              <h1 id="directory-page-title"><i class="fa-solid fa-users" style="color: var(--primary);"></i> Student Directory</h1>
+              <p>Search, filter, inspect profiles, and manage student enrollment records.</p>
+            </div>
+            <div class="page-actions">
+              <div style="display: inline-flex; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 2px;">
+                <button class="btn btn-sm" id="dir-table-btn" style="background: var(--primary); color: #fff;" onclick="setDirView('table')"><i class="fa-solid fa-list"></i></button>
+                <button class="btn btn-sm" id="dir-grid-btn" style="background: transparent; color: var(--text-secondary);" onclick="setDirView('grid')"><i class="fa-solid fa-grip"></i></button>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="switchTab('add-student')"><i class="fa-solid fa-user-plus"></i> Add Student</button>
+            </div>
+          </div>
+
+          <!-- Multi-filter bar -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-body" style="padding: 1.25rem;">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.9rem; align-items: flex-end;">
+                <div style="grid-column: span 2;">
+                  <label class="form-label" style="font-size: 0.76rem;">Search</label>
+                  <input type="text" id="dir-filter-q" class="form-control" placeholder="Search by name, ID, course..." oninput="filterStudents()">
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 0.76rem;">Course</label>
+                  <select id="dir-filter-course" class="form-control" onchange="filterStudents()">
+                    <option value="">All Courses</option>
+                    <option value="CSE">CSE</option><option value="ECE">ECE</option><option value="EEE">EEE</option>
+                    <option value="MECH">MECH</option><option value="CIVIL">CIVIL</option><option value="IT">IT</option>
+                    <option value="AIML">AIML</option><option value="DS">DS</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 0.76rem;">Year</label>
+                  <select id="dir-filter-year" class="form-control" onchange="filterStudents()">
+                    <option value="">All Years</option>
+                    <option value="1">Year 1</option><option value="2">Year 2</option><option value="3">Year 3</option><option value="4">Year 4</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 0.76rem;">Status</label>
+                  <select id="dir-filter-status" class="form-control" onchange="filterStudents()">
+                    <option value="">All Statuses</option>
+                    <option value="Excellent">Excellent (&ge;90%)</option>
+                    <option value="Good">Good (70-89%)</option>
+                    <option value="Average">Average (60-69%)</option>
+                    <option value="Needs Improvement">Needs Improvement (&lt;60%)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size: 0.76rem;">Sort By</label>
+                  <select id="dir-filter-sort" class="form-control" onchange="filterStudents()">
+                    <option value="marks-desc">Marks: High to Low</option>
+                    <option value="marks-asc">Marks: Low to High</option>
+                    <option value="name-asc">Name: A to Z</option>
+                    <option value="created_at-desc">Newest First</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table View -->
+          <div class="card" id="dir-table-container">
+            <div class="card-header">
+              <div class="card-title" id="dir-total-count">18 Students Found</div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary btn-sm" onclick="exportDataCSV()"><i class="fa-solid fa-file-csv"></i> CSV</button>
+                <button class="btn btn-secondary btn-sm" onclick="exportDataJSON()"><i class="fa-solid fa-code"></i> JSON</button>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>Contact</th>
+                      <th>Program</th>
+                      <th>Score</th>
+                      <th>Status</th>
+                      <th>Enrolled</th>
+                      <th style="text-align: right;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dir-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid View -->
+          <div id="dir-grid-container" style="display: none; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;"></div>
+        </section>
+
+        <!-- ===============================================================
+             TAB 5: ADD STUDENT
+             =============================================================== -->
+        <section class="tab-view" id="view-add-student">
+          <div style="max-width: 800px; margin: 0 auto;">
+            <div class="page-header">
+              <div class="page-title-wrap">
+                <h1><i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> Register New Student</h1>
+                <p>Enroll a new student into the database with contact, program, and grade information.</p>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="switchTab('dashboard')"><i class="fa-solid fa-arrow-left"></i> Return</button>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Student Information Form</div>
+                <div id="add-preview-status" class="badge-status status-good">Status Preview: Good (80%)</div>
+              </div>
+              <div class="card-body">
+                <form id="add-form-element" onsubmit="submitNewStudent(event)">
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Student ID *</label>
+                      <input type="text" id="form-id" class="form-control" required placeholder="e.g. S1025 or 24F05A0504">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Full Name *</label>
+                      <input type="text" id="form-name" class="form-control" required placeholder="e.g. Ankamma Rao Pallapu">
+                    </div>
+                  </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Email Address *</label>
+                      <input type="email" id="form-email" class="form-control" required placeholder="student@example.edu">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Phone Number *</label>
+                      <input type="tel" id="form-phone" class="form-control" required placeholder="+91 9876543210">
+                    </div>
+                  </div>
+
+                  <div class="form-grid-3">
+                    <div class="form-group">
+                      <label class="form-label">Age *</label>
+                      <input type="number" id="form-age" class="form-control" min="15" max="60" value="20" required>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Gender *</label>
+                      <select id="form-gender" class="form-control" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Academic Year *</label>
+                      <select id="form-year" class="form-control" required>
+                        <option value="1">Year 1</option>
+                        <option value="2">Year 2</option>
+                        <option value="3">Year 3</option>
+                        <option value="4">Year 4</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="form-grid-3">
+                    <div class="form-group">
+                      <label class="form-label">Course Track *</label>
+                      <select id="form-course" class="form-control" required onchange="syncDepartment()">
+                        <option value="CSE">CSE</option><option value="ECE">ECE</option><option value="EEE">EEE</option>
+                        <option value="MECH">MECH</option><option value="CIVIL">CIVIL</option><option value="IT">IT</option>
+                        <option value="AIML">AIML</option><option value="DS">DS</option>
+                      </select>
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                      <label class="form-label">Department</label>
+                      <input type="text" id="form-dept" class="form-control" value="Computer Science & Engineering" required>
+                    </div>
+                  </div>
+
+                  <!-- Score Slider -->
+                  <div class="form-group" style="background: var(--bg-surface-elevated); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                      <label class="form-label" style="margin-bottom: 0;">Academic Marks (Score) *</label>
+                      <input type="number" id="form-marks-num" class="form-control" style="width: 85px; text-align: center; font-weight: 700; color: var(--primary);" min="0" max="100" step="0.5" value="80" oninput="syncMarks(this.value)">
+                    </div>
+                    <input type="range" id="form-marks-slider" min="0" max="100" step="0.5" value="80" style="width: 100%; accent-color: var(--primary); cursor: pointer;" oninput="syncMarks(this.value)">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+                      <span>0% (Fail)</span><span>40% (Pass mark)</span><span>60% (Avg)</span><span>70% (Good)</span><span>90%+ (Excellent)</span>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">City / Address</label>
+                    <input type="text" id="form-address" class="form-control" placeholder="e.g. Guntur, Andhra Pradesh">
+                  </div>
+
+                  <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 2rem;">
+                    <button type="button" class="btn btn-secondary" onclick="switchTab('dashboard')">Cancel</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Enroll Student</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===============================================================
+             TAB 6: SETTINGS & EXPORTS
+             =============================================================== -->
+        <section class="tab-view" id="view-settings">
+          <div style="max-width: 960px; margin: 0 auto;">
+            <div class="page-header">
+              <div class="page-title-wrap">
+                <h1><i class="fa-solid fa-sliders" style="color: var(--primary);"></i> Settings & Public Sharing Hub</h1>
+                <p>Manage data export, sample records reset, and public links.</p>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 2rem; border-left: 4px solid var(--primary);">
+              <div class="card-header">
+                <div class="card-title"><i class="fa-solid fa-globe" style="color: var(--primary);"></i> Live Public Dashboard Sharing</div>
+                <span class="badge-status status-excellent">Active</span>
+              </div>
+              <div class="card-body">
+                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                  Anyone in the world can view your live dashboard via your GitHub Pages link:
+                </p>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                  <input type="text" id="settings-share-input" class="form-control" readonly style="font-family: 'JetBrains Mono', monospace;" value="https://pallapuankammarao-c.github.io/StudentDatamManagement/">
+                  <button class="btn btn-primary" onclick="copySettingsLink()"><i class="fa-solid fa-copy"></i> Copy</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Export & Reset Data -->
+            <div class="charts-grid">
+              <div class="card col-6">
+                <div class="card-header"><div class="card-title"><i class="fa-solid fa-file-export" style="color: var(--success);"></i> Export Records</div></div>
+                <div class="card-body">
+                  <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Download dataset for reporting or external analysis.</p>
+                  <div style="display: flex; gap: 0.75rem;">
+                    <button class="btn btn-secondary" onclick="exportDataCSV()"><i class="fa-solid fa-file-csv" style="color: var(--success);"></i> Download CSV</button>
+                    <button class="btn btn-secondary" onclick="exportDataJSON()"><i class="fa-solid fa-code" style="color: var(--info);"></i> Download JSON</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card col-6">
+                <div class="card-header"><div class="card-title"><i class="fa-solid fa-rotate-left" style="color: var(--warning);"></i> Reset Database</div></div>
+                <div class="card-body">
+                  <p style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Reset all records to original 18 sample students.</p>
+                  <button class="btn btn-danger btn-sm" onclick="resetSampleData()"><i class="fa-solid fa-trash-can-arrow-up"></i> Reset Sample Data</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
     </div>
-  </main>
+  </div>
 
-  <!-- Student Profile Drawer Modal -->
+  <!-- Student Report Card Modal -->
   <div class="modal-overlay" id="profile-modal">
     <div class="modal-container">
       <div class="modal-header">
@@ -781,85 +1319,33 @@
     </div>
   </div>
 
-  <!-- Add Student Modal -->
-  <div class="modal-overlay" id="add-modal">
+  <!-- Share Modal -->
+  <div class="modal-overlay" id="share-modal">
     <div class="modal-container">
       <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-user-plus" style="color: var(--primary);"></i> Register New Student</div>
-        <button class="btn-icon" onclick="closeModal('add-modal')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-title"><i class="fa-solid fa-globe" style="color: var(--primary);"></i> Share Live Dashboard Link</div>
+        <button class="btn-icon" onclick="closeModal('share-modal')"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <form id="add-student-form" onsubmit="handleCreateStudent(event)">
-        <div class="modal-body">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label class="form-label">Student ID</label>
-              <input type="text" id="add-id" class="form-control" required placeholder="e.g. S1025">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Full Name</label>
-              <input type="text" id="add-name" class="form-control" required placeholder="e.g. Ankamma Rao">
-            </div>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label class="form-label">Email</label>
-              <input type="email" id="add-email" class="form-control" required placeholder="student@example.edu">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Phone</label>
-              <input type="tel" id="add-phone" class="form-control" required placeholder="9876543210">
-            </div>
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label class="form-label">Course</label>
-              <select id="add-course" class="form-control" required>
-                <option value="CSE">CSE</option>
-                <option value="ECE">ECE</option>
-                <option value="EEE">EEE</option>
-                <option value="MECH">MECH</option>
-                <option value="CIVIL">CIVIL</option>
-                <option value="IT">IT</option>
-                <option value="AIML">AIML</option>
-                <option value="DS">DS</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Year</label>
-              <select id="add-year" class="form-control">
-                <option value="1">Year 1</option>
-                <option value="2">Year 2</option>
-                <option value="3">Year 3</option>
-                <option value="4">Year 4</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Marks (0-100%)</label>
-              <input type="number" step="0.5" id="add-marks" class="form-control" min="0" max="100" required value="85">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">City / Address</label>
-            <input type="text" id="add-address" class="form-control" placeholder="e.g. Guntur, Andhra Pradesh">
-          </div>
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+          Anyone worldwide can open this link on their mobile or PC to view the live dashboard and academic performance:
+        </p>
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <input type="text" class="form-control" id="modal-share-input" readonly value="https://pallapuankammarao-c.github.io/StudentDatamManagement/">
+          <button class="btn btn-primary" onclick="copyShareModalLink()"><i class="fa-solid fa-copy"></i> Copy</button>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Save Student</button>
-        </div>
-      </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('share-modal')">Close</button>
+      </div>
     </div>
   </div>
 
   <div id="toast-container"></div>
 
-  <footer>
-    <p>🎓 Student Data Management & Analytics Platform · Open Source on <a href="https://github.com/pallapuankammarao-c/StudentDatamManagement" target="_blank" style="color: var(--primary); text-decoration: underline;">GitHub</a></p>
-  </footer>
-
+  <!-- Interactive JavaScript Application Logic -->
   <script>
-    // Initial 18 students seed dataset
-    const INITIAL_STUDENTS = [
+    const INITIAL_DATA = [
       { id: "S1001", name: "Ankamma Reddy", email: "ankamma.reddy@example.edu", phone: "9876543210", age: 20, gender: "Female", course: "CSE", department: "Computer Science & Engineering", year: 3, marks: 92.5, address: "Bapatla, Andhra Pradesh", created_at: "2026-09-18", status: "Excellent" },
       { id: "S1002", name: "Ravi Teja", email: "ravi.teja@example.edu", phone: "9876543941", age: 19, gender: "Male", course: "CSE", department: "Computer Science & Engineering", year: 2, marks: 85.0, address: "Guntur, Andhra Pradesh", created_at: "2026-08-31", status: "Good" },
       { id: "S1003", name: "Sravani Devi", email: "sravani.devi@example.edu", phone: "9876544672", age: 22, gender: "Female", course: "ECE", department: "Electronics & Communication", year: 4, marks: 78.0, address: "Vijayawada, Andhra Pradesh", created_at: "2026-08-16", status: "Good" },
@@ -880,41 +1366,79 @@
       { id: "S1018", name: "Suresh Naidu", email: "suresh.naidu@example.edu", phone: "9876555637", age: 20, gender: "Male", course: "ECE", department: "Electronics & Communication", year: 2, marks: 47.0, address: "Visakhapatnam, Andhra Pradesh", created_at: "2026-01-24", status: "Needs Improvement" }
     ];
 
+    const COURSE_DEPT = {
+      "CSE": "Computer Science & Engineering", "ECE": "Electronics & Communication",
+      "EEE": "Electrical & Electronics", "MECH": "Mechanical Engineering",
+      "CIVIL": "Civil Engineering", "IT": "Information Technology",
+      "AIML": "Artificial Intelligence & ML", "DS": "Data Science"
+    };
+
     let students = [];
     let charts = {};
-    let currentView = 'table';
+    let currentDirView = 'table';
 
-    function initApp() {
+    function init() {
       const stored = localStorage.getItem('edupulse_students_data');
       if (stored) {
-        try { students = JSON.parse(stored); } catch (e) { students = [...INITIAL_STUDENTS]; }
+        try { students = JSON.parse(stored); } catch (e) { students = [...INITIAL_DATA]; }
       } else {
-        students = [...INITIAL_STUDENTS];
+        students = [...INITIAL_DATA];
       }
 
-      const savedTheme = localStorage.getItem('app-theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      updateThemeIcon(savedTheme);
+      const theme = localStorage.getItem('app-theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      updateThemeIcon(theme);
 
-      renderAll();
+      // Check URL hash for direct tab navigation
+      const hash = window.location.hash.replace('#', '') || 'dashboard';
+      switchTab(hash);
+
+      renderDashboard();
+      renderAnalytics();
+      filterStudents();
     }
 
-    function renderAll() {
-      updateKPIs();
-      renderCharts();
-      renderLeaderboard();
-      applyFilters();
+    /* Tab Switching Navigation */
+    function switchTab(tabId) {
+      if (tabId === 'records') {
+        tabId = 'directory';
+        document.getElementById('directory-page-title').innerHTML = '<i class="fa-solid fa-table-list" style="color: var(--primary);"></i> Academic Grades & Records';
+      } else if (tabId === 'directory') {
+        document.getElementById('directory-page-title').innerHTML = '<i class="fa-solid fa-users" style="color: var(--primary);"></i> Student Directory';
+      }
+
+      document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+
+      const target = document.getElementById(`view-${tabId}`);
+      if (target) target.classList.add('active');
+
+      const navBtn = document.getElementById(`nav-${tabId}`);
+      if (navBtn) navBtn.classList.add('active');
+
+      window.location.hash = tabId;
+
+      // Close mobile sidebar
+      document.querySelector('.app-sidebar').classList.remove('open');
+
+      if (tabId === 'dashboard') renderDashboardCharts();
+      if (tabId === 'analytics') renderAnalytics();
+      if (tabId === 'directory') filterStudents();
     }
 
-    function calculateStatus(marks) {
-      if (marks >= 90) return 'Excellent';
-      if (marks >= 70) return 'Good';
-      if (marks >= 60) return 'Average';
+    function toggleSidebar() {
+      document.querySelector('.app-sidebar').classList.toggle('open');
+    }
+
+    function calculateStatus(m) {
+      if (m >= 90) return 'Excellent';
+      if (m >= 70) return 'Good';
+      if (m >= 60) return 'Average';
       return 'Needs Improvement';
     }
 
-    function getStatusClass(status) {
-      switch (status) {
+    function getStatusClass(s) {
+      switch (s) {
         case 'Excellent': return 'status-excellent';
         case 'Good': return 'status-good';
         case 'Average': return 'status-average';
@@ -922,7 +1446,17 @@
       }
     }
 
-    function updateKPIs() {
+    function getStatusColor(s) {
+      switch (s) {
+        case 'Excellent': return '#10b981';
+        case 'Good': return '#3b82f6';
+        case 'Average': return '#f59e0b';
+        default: return '#ef4444';
+      }
+    }
+
+    /* Render Dashboard */
+    function renderDashboard() {
       const total = students.length;
       if (total === 0) return;
       const sum = students.reduce((acc, s) => acc + s.marks, 0);
@@ -931,137 +1465,20 @@
       const top = Math.max(...students.map(s => s.marks)).toFixed(1);
       const courses = new Set(students.map(s => s.course)).size;
 
-      document.getElementById('kpi-total').textContent = total;
-      document.getElementById('kpi-avg').textContent = avg + '%';
-      document.getElementById('kpi-pass').textContent = pass + '%';
-      document.getElementById('kpi-top').textContent = top + '%';
-      document.getElementById('kpi-courses').textContent = courses;
+      document.getElementById('kpi-dash-total').textContent = total;
+      document.getElementById('kpi-dash-avg').textContent = avg + '%';
+      document.getElementById('kpi-dash-pass').textContent = pass + '%';
+      document.getElementById('kpi-dash-top').textContent = top + '%';
+      document.getElementById('kpi-dash-courses').textContent = courses;
+
+      renderDashboardLeaderboard();
+      renderRecentStudents();
+      renderDashboardCharts();
     }
 
-    function renderCharts() {
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const textColor = isDark ? '#94a3b8' : '#64748b';
-      const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-
-      Object.values(charts).forEach(c => c && c.destroy());
-      charts = {};
-
-      // 1. Trend Chart
-      const trendCtx = document.getElementById('chartTrend').getContext('2d');
-      const grad = trendCtx.createLinearGradient(0, 0, 0, 260);
-      grad.addColorStop(0, 'rgba(99, 102, 241, 0.35)');
-      grad.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
-
-      charts.trend = new Chart(trendCtx, {
-        type: 'line',
-        data: {
-          labels: ['Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'May 26', 'Jun 26', 'Jul 26', 'Aug 26', 'Sep 26'],
-          datasets: [{
-            label: 'Average Score (%)',
-            data: [47.0, 88.5, 67.0, 85.7, 49.5, 80.0, 75.0, 76.3, 92.5],
-            borderColor: '#6366f1',
-            backgroundColor: grad,
-            fill: true,
-            tension: 0.35,
-            borderWidth: 3,
-            pointRadius: 4,
-            pointBackgroundColor: '#6366f1'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: textColor }, grid: { color: gridColor } },
-            y: { min: 0, max: 100, ticks: { color: textColor }, grid: { color: gridColor } }
-          }
-        }
-      });
-
-      // 2. Course Distribution
-      const courseCounts = {};
-      students.forEach(s => courseCounts[s.course] = (courseCounts[s.course] || 0) + 1);
-
-      charts.course = new Chart(document.getElementById('chartCourse'), {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(courseCounts),
-          datasets: [{
-            data: Object.values(courseCounts),
-            backgroundColor: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6'],
-            borderWidth: 2,
-            borderColor: isDark ? '#111827' : '#ffffff'
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '70%',
-          plugins: { legend: { position: 'bottom', labels: { color: textColor, padding: 10, boxWidth: 10 } } }
-        }
-      });
-
-      // 3. Grade Tier Distribution
-      const tierCounts = { 'Excellent': 0, 'Good': 0, 'Average': 0, 'Needs Improvement': 0 };
-      students.forEach(s => tierCounts[s.status] = (tierCounts[s.status] || 0) + 1);
-
-      charts.marks = new Chart(document.getElementById('chartMarks'), {
-        type: 'bar',
-        data: {
-          labels: ['Excellent', 'Good', 'Average', 'Needs Improvement'],
-          datasets: [{
-            label: 'Students',
-            data: Object.values(tierCounts),
-            backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'],
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: textColor }, grid: { display: false } },
-            y: { beginAtZero: true, ticks: { color: textColor, stepSize: 1 }, grid: { color: gridColor } }
-          }
-        }
-      });
-
-      // 4. Department Averages
-      const deptSums = {}, deptCounts = {};
-      students.forEach(s => {
-        deptSums[s.course] = (deptSums[s.course] || 0) + s.marks;
-        deptCounts[s.course] = (deptCounts[s.course] || 0) + 1;
-      });
-      const deptAverages = Object.keys(deptSums).map(c => (deptSums[c] / deptCounts[c]).toFixed(1));
-
-      charts.avg = new Chart(document.getElementById('chartAvg'), {
-        type: 'bar',
-        data: {
-          labels: Object.keys(deptSums),
-          datasets: [{
-            label: 'Average Score (%)',
-            data: deptAverages,
-            backgroundColor: '#8b5cf6',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color: textColor }, grid: { display: false } },
-            y: { min: 0, max: 100, ticks: { color: textColor }, grid: { color: gridColor } }
-          }
-        }
-      });
-    }
-
-    function renderLeaderboard() {
+    function renderDashboardLeaderboard() {
       const top = [...students].sort((a, b) => b.marks - a.marks).slice(0, 5);
-      const container = document.getElementById('leaderboard-body');
+      const container = document.getElementById('dash-leaderboard');
       container.innerHTML = top.map((s, idx) => {
         let rankCls = 'rank-other';
         let icon = idx + 1;
@@ -1070,7 +1487,7 @@
         else if (idx === 2) { rankCls = 'rank-3'; icon = '<i class="fa-solid fa-award" style="color: #b45309;"></i>'; }
 
         return `
-          <div class="leader-item" onclick="openStudentProfile('${s.id}')" style="cursor: pointer;">
+          <div class="leader-item" onclick="openStudentProfile('${s.id}')">
             <div class="rank-badge ${rankCls}">${icon}</div>
             <div class="student-avatar" style="width: 34px; height: 34px;">${s.name.charAt(0)}</div>
             <div style="flex: 1; min-width: 0;">
@@ -1086,124 +1503,396 @@
       }).join('');
     }
 
-    function applyFilters() {
-      const q = document.getElementById('table-search').value.toLowerCase().trim();
-      const course = document.getElementById('filter-course').value;
-      const status = document.getElementById('filter-status').value;
-      const sort = document.getElementById('filter-sort').value;
-
-      let filtered = students.filter(s => {
-        const matchesQ = !q || s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.course.toLowerCase().includes(q);
-        const matchesCourse = !course || s.course === course;
-        const matchesStatus = !status || s.status === status;
-        return matchesQ && matchesCourse && matchesStatus;
-      });
-
-      if (sort === 'marks-desc') filtered.sort((a, b) => b.marks - a.marks);
-      else if (sort === 'marks-asc') filtered.sort((a, b) => a.marks - b.marks);
-      else if (sort === 'name-asc') filtered.sort((a, b) => a.name.localeCompare(b.name));
-      else if (sort === 'created_at-desc') filtered.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
-
-      renderTable(filtered);
-      renderGrid(filtered);
-    }
-
-    function renderTable(list) {
-      const tbody = document.getElementById('students-tbody');
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">No matching students found</td></tr>`;
-        return;
-      }
-      tbody.innerHTML = list.map(s => `
+    function renderRecentStudents() {
+      const recent = [...students].slice(0, 6);
+      const tbody = document.getElementById('dash-recent-tbody');
+      tbody.innerHTML = recent.map(s => `
         <tr>
           <td>
             <div class="student-cell" onclick="openStudentProfile('${s.id}')">
               <div class="student-avatar">${s.name.charAt(0)}</div>
               <div>
                 <div class="student-name">${s.name}</div>
-                <div class="student-id">${s.id} · ${s.email}</div>
+                <div class="student-id">${s.id}</div>
               </div>
             </div>
           </td>
           <td>
             <span class="badge-tag">${s.course}</span>
-            <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.35rem;">Year ${s.year}</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.25rem;">Yr ${s.year}</span>
           </td>
           <td>
             <div class="score-cell">
-              <span style="font-weight: 700; min-width: 44px;">${s.marks}%</span>
-              <div class="progress-track">
-                <div class="progress-fill" style="width: ${s.marks}%; background: ${s.marks >= 90 ? '#10b981' : s.marks >= 70 ? '#3b82f6' : s.marks >= 60 ? '#f59e0b' : '#ef4444'};"></div>
-              </div>
+              <span style="font-weight: 700; min-width: 42px;">${s.marks}%</span>
+              <div class="progress-track"><div class="progress-fill" style="width: ${s.marks}%; background: ${getStatusColor(s.status)};"></div></div>
             </div>
           </td>
-          <td>
-            <span class="badge-status ${getStatusClass(s.status)}">
-              <i class="fa-solid fa-circle" style="font-size: 0.45rem;"></i>
-              ${s.status}
-            </span>
-          </td>
+          <td><span class="badge-status ${getStatusClass(s.status)}">${s.status}</span></td>
           <td style="text-align: right;">
-            <button class="btn btn-secondary btn-sm" onclick="openStudentProfile('${s.id}')"><i class="fa-solid fa-eye"></i></button>
-            <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="deleteStudent('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn btn-secondary btn-sm" onclick="openStudentProfile('${s.id}')"><i class="fa-solid fa-eye"></i> View</button>
           </td>
         </tr>
       `).join('');
     }
 
-    function renderGrid(list) {
-      const container = document.getElementById('grid-view-container');
-      if (list.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">No students found</div>`;
-        return;
-      }
-      container.innerHTML = list.map(s => `
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-            <div class="student-avatar" style="width: 42px; height: 42px; font-size: 1rem;">${s.name.charAt(0)}</div>
-            <span class="badge-status ${getStatusClass(s.status)}">${s.status}</span>
-          </div>
-          <h4 style="font-size: 1rem; font-weight: 700; cursor: pointer;" onclick="openStudentProfile('${s.id}')">${s.name}</h4>
-          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem;">${s.id} · ${s.course} (Year ${s.year})</div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.35rem;">
-            <span style="color: var(--text-muted);">Academic Score</span>
-            <span style="font-weight: 700;">${s.marks}%</span>
-          </div>
-          <div class="progress-track" style="margin-bottom: 1rem;">
-            <div class="progress-fill" style="width: ${s.marks}%; background: ${s.marks >= 90 ? '#10b981' : s.marks >= 70 ? '#3b82f6' : s.marks >= 60 ? '#f59e0b' : '#ef4444'};"></div>
-          </div>
-          <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
-            <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="openStudentProfile('${s.id}')"><i class="fa-solid fa-eye"></i> View</button>
-            <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="deleteStudent('${s.id}')"><i class="fa-solid fa-trash"></i></button>
-          </div>
-        </div>
-      `).join('');
+    function getChartTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      return {
+        textColor: isDark ? '#94a3b8' : '#64748b',
+        gridColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+        surfaceColor: isDark ? '#111827' : '#ffffff'
+      };
     }
 
-    function setViewMode(mode) {
-      currentView = mode;
-      const tableBtn = document.getElementById('view-table-btn');
-      const gridBtn = document.getElementById('view-grid-btn');
-      const tableWrap = document.getElementById('table-view-container');
-      const gridWrap = document.getElementById('grid-view-container');
+    function renderDashboardCharts() {
+      const t = getChartTheme();
+      ['dashChartTrend', 'dashChartCourse', 'dashChartMarks', 'dashChartAvg'].forEach(id => {
+        if (charts[id]) charts[id].destroy();
+      });
+
+      // Trend
+      const trendCtx = document.getElementById('dashChartTrend').getContext('2d');
+      const grad = trendCtx.createLinearGradient(0, 0, 0, 260);
+      grad.addColorStop(0, 'rgba(99, 102, 241, 0.35)');
+      grad.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+      charts.dashChartTrend = new Chart(trendCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'May 26', 'Jun 26', 'Jul 26', 'Aug 26', 'Sep 26'],
+          datasets: [{
+            data: [47.0, 88.5, 67.0, 85.7, 49.5, 80.0, 75.0, 76.3, 92.5],
+            borderColor: '#6366f1',
+            backgroundColor: grad,
+            fill: true,
+            tension: 0.35,
+            borderWidth: 3,
+            pointRadius: 4,
+            pointBackgroundColor: '#6366f1'
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: t.textColor }, grid: { color: t.gridColor } },
+            y: { min: 0, max: 100, ticks: { color: t.textColor }, grid: { color: t.gridColor } }
+          }
+        }
+      });
+
+      // Course Doughnut
+      const cCounts = {};
+      students.forEach(s => cCounts[s.course] = (cCounts[s.course] || 0) + 1);
+      charts.dashChartCourse = new Chart(document.getElementById('dashChartCourse'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(cCounts),
+          datasets: [{
+            data: Object.values(cCounts),
+            backgroundColor: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6'],
+            borderWidth: 2, borderColor: t.surfaceColor
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '70%',
+          plugins: { legend: { position: 'bottom', labels: { color: t.textColor, padding: 10, boxWidth: 10 } } }
+        }
+      });
+
+      // Marks Dist
+      const tCounts = { 'Excellent': 0, 'Good': 0, 'Average': 0, 'Needs Improvement': 0 };
+      students.forEach(s => tCounts[s.status] = (tCounts[s.status] || 0) + 1);
+      charts.dashChartMarks = new Chart(document.getElementById('dashChartMarks'), {
+        type: 'bar',
+        data: {
+          labels: ['Excellent', 'Good', 'Average', 'Needs Improvement'],
+          datasets: [{ data: Object.values(tCounts), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'], borderRadius: 6 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: t.textColor }, grid: { display: false } },
+            y: { beginAtZero: true, ticks: { color: t.textColor, stepSize: 1 }, grid: { color: t.gridColor } }
+          }
+        }
+      });
+
+      // Course Avg
+      const cSums = {}, cTotal = {};
+      students.forEach(s => { cSums[s.course] = (cSums[s.course] || 0) + s.marks; cTotal[s.course] = (cTotal[s.course] || 0) + 1; });
+      charts.dashChartAvg = new Chart(document.getElementById('dashChartAvg'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(cSums),
+          datasets: [{ data: Object.keys(cSums).map(k => (cSums[k] / cTotal[k]).toFixed(1)), backgroundColor: '#8b5cf6', borderRadius: 6 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: t.textColor }, grid: { display: false } },
+            y: { min: 0, max: 100, ticks: { color: t.textColor }, grid: { color: t.gridColor } }
+          }
+        }
+      });
+    }
+
+    /* Render Analytics 6 Charts */
+    function renderAnalytics() {
+      const t = getChartTheme();
+      ['anChartTrend', 'anChartCourse', 'anChartAvg', 'anChartMarks', 'anChartGender', 'anChartYear'].forEach(id => {
+        if (charts[id]) charts[id].destroy();
+      });
+
+      // 1. Trend
+      const ctxTrend = document.getElementById('anChartTrend').getContext('2d');
+      const grad = ctxTrend.createLinearGradient(0, 0, 0, 260);
+      grad.addColorStop(0, 'rgba(79, 70, 229, 0.3)');
+      grad.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
+      charts.anChartTrend = new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+          labels: ['Jan 26', 'Feb 26', 'Mar 26', 'Apr 26', 'May 26', 'Jun 26', 'Jul 26', 'Aug 26', 'Sep 26'],
+          datasets: [{ data: [47.0, 88.5, 67.0, 85.7, 49.5, 80.0, 75.0, 76.3, 92.5], borderColor: '#4f46e5', backgroundColor: grad, fill: true, tension: 0.4, borderWidth: 3 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: t.textColor }, grid: { color: t.gridColor } }, y: { min: 0, max: 100, ticks: { color: t.textColor }, grid: { color: t.gridColor } } } }
+      });
+
+      // 2. Course
+      const cCounts = {};
+      students.forEach(s => cCounts[s.course] = (cCounts[s.course] || 0) + 1);
+      charts.anChartCourse = new Chart(document.getElementById('anChartCourse'), {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(cCounts),
+          datasets: [{ data: Object.values(cCounts), backgroundColor: ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#3b82f6', '#14b8a6'], borderWidth: 2, borderColor: t.surfaceColor }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom', labels: { color: t.textColor, padding: 10, boxWidth: 10 } } } }
+      });
+
+      // 3. Avg
+      const cSums = {}, cTotal = {};
+      students.forEach(s => { cSums[s.course] = (cSums[s.course] || 0) + s.marks; cTotal[s.course] = (cTotal[s.course] || 0) + 1; });
+      charts.anChartAvg = new Chart(document.getElementById('anChartAvg'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(cSums),
+          datasets: [{ data: Object.keys(cSums).map(k => (cSums[k] / cTotal[k]).toFixed(1)), backgroundColor: '#8b5cf6', borderRadius: 6 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: t.textColor }, grid: { display: false } }, y: { min: 0, max: 100, ticks: { color: t.textColor }, grid: { color: t.gridColor } } } }
+      });
+
+      // 4. Marks
+      const tCounts = { 'Excellent': 0, 'Good': 0, 'Average': 0, 'Needs Improvement': 0 };
+      students.forEach(s => tCounts[s.status] = (tCounts[s.status] || 0) + 1);
+      charts.anChartMarks = new Chart(document.getElementById('anChartMarks'), {
+        type: 'bar',
+        data: {
+          labels: ['Excellent', 'Good', 'Average', 'Needs Improvement'],
+          datasets: [{ data: Object.values(tCounts), backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'], borderRadius: 6 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: t.textColor }, grid: { display: false } }, y: { beginAtZero: true, ticks: { color: t.textColor, stepSize: 1 }, grid: { color: t.gridColor } } } }
+      });
+
+      // 5. Gender
+      const gCounts = {};
+      students.forEach(s => gCounts[s.gender] = (gCounts[s.gender] || 0) + 1);
+      charts.anChartGender = new Chart(document.getElementById('anChartGender'), {
+        type: 'pie',
+        data: {
+          labels: Object.keys(gCounts),
+          datasets: [{ data: Object.values(gCounts), backgroundColor: ['#3b82f6', '#ec4899', '#a855f7'], borderWidth: 2, borderColor: t.surfaceColor }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: t.textColor, padding: 10, boxWidth: 10 } } } }
+      });
+
+      // 6. Year
+      const yCounts = { 'Year 1': 0, 'Year 2': 0, 'Year 3': 0, 'Year 4': 0 };
+      students.forEach(s => yCounts[`Year ${s.year}`] = (yCounts[`Year ${s.year}`] || 0) + 1);
+      charts.anChartYear = new Chart(document.getElementById('anChartYear'), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(yCounts),
+          datasets: [{ data: Object.values(yCounts), backgroundColor: '#06b6d4', borderRadius: 6 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: t.textColor }, grid: { display: false } }, y: { beginAtZero: true, ticks: { color: t.textColor, stepSize: 1 }, grid: { color: t.gridColor } } } }
+      });
+    }
+
+    /* Student Directory Filter & Render */
+    function filterStudents() {
+      const q = document.getElementById('dir-filter-q').value.toLowerCase().trim();
+      const course = document.getElementById('dir-filter-course').value;
+      const year = document.getElementById('dir-filter-year').value;
+      const status = document.getElementById('dir-filter-status').value;
+      const sort = document.getElementById('dir-filter-sort').value;
+
+      let list = students.filter(s => {
+        const matchesQ = !q || s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.email.toLowerCase().includes(q) || s.course.toLowerCase().includes(q);
+        const matchesCourse = !course || s.course === course;
+        const matchesYear = !year || String(s.year) === year;
+        const matchesStatus = !status || s.status === status;
+        return matchesQ && matchesCourse && matchesYear && matchesStatus;
+      });
+
+      if (sort === 'marks-desc') list.sort((a, b) => b.marks - a.marks);
+      else if (sort === 'marks-asc') list.sort((a, b) => a.marks - b.marks);
+      else if (sort === 'name-asc') list.sort((a, b) => a.name.localeCompare(b.name));
+      else if (sort === 'created_at-desc') list.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
+      document.getElementById('dir-total-count').textContent = `${list.length} Students Found`;
+
+      // Render table
+      const tbody = document.getElementById('dir-tbody');
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No matching students found</td></tr>`;
+      } else {
+        tbody.innerHTML = list.map(s => `
+          <tr>
+            <td>
+              <div class="student-cell" onclick="openStudentProfile('${s.id}')">
+                <div class="student-avatar">${s.name.charAt(0)}</div>
+                <div><div class="student-name">${s.name}</div><div class="student-id">${s.id}</div></div>
+              </div>
+            </td>
+            <td><div style="font-size: 0.85rem;">${s.email}</div><div style="font-size: 0.75rem; color: var(--text-muted);">${s.phone}</div></td>
+            <td><span class="badge-tag">${s.course}</span><span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 0.25rem;">Yr ${s.year}</span></td>
+            <td>
+              <div class="score-cell">
+                <span style="font-weight: 700; min-width: 42px;">${s.marks}%</span>
+                <div class="progress-track"><div class="progress-fill" style="width: ${s.marks}%; background: ${getStatusColor(s.status)};"></div></div>
+              </div>
+            </td>
+            <td><span class="badge-status ${getStatusClass(s.status)}">${s.status}</span></td>
+            <td style="font-size: 0.78rem; color: var(--text-muted);">${s.created_at || '—'}</td>
+            <td style="text-align: right;">
+              <button class="btn btn-secondary btn-sm" onclick="openStudentProfile('${s.id}')"><i class="fa-solid fa-eye"></i></button>
+              <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="deleteStudent('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // Render grid
+      const grid = document.getElementById('dir-grid-container');
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 2rem;">No students found</div>`;
+      } else {
+        grid.innerHTML = list.map(s => `
+          <div class="card" style="padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+              <div class="student-avatar" style="width: 42px; height: 42px; font-size: 1rem;">${s.name.charAt(0)}</div>
+              <span class="badge-status ${getStatusClass(s.status)}">${s.status}</span>
+            </div>
+            <h4 style="font-size: 1rem; font-weight: 700; cursor: pointer;" onclick="openStudentProfile('${s.id}')">${s.name}</h4>
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem;">${s.id} · ${s.course} (Yr ${s.year})</div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.35rem;">
+              <span style="color: var(--text-muted);">Score</span><span style="font-weight: 700;">${s.marks}%</span>
+            </div>
+            <div class="progress-track" style="margin-bottom: 1rem;"><div class="progress-fill" style="width: ${s.marks}%; background: ${getStatusColor(s.status)};"></div></div>
+            <div style="display: flex; gap: 0.5rem; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem;">
+              <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="openStudentProfile('${s.id}')"><i class="fa-solid fa-eye"></i> View</button>
+              <button class="btn btn-secondary btn-sm" style="color: var(--danger);" onclick="deleteStudent('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function setDirView(mode) {
+      currentDirView = mode;
+      const tableBtn = document.getElementById('dir-table-btn');
+      const gridBtn = document.getElementById('dir-grid-btn');
+      const tableWrap = document.getElementById('dir-table-container');
+      const gridWrap = document.getElementById('dir-grid-container');
 
       if (mode === 'grid') {
-        tableWrap.style.display = 'none';
-        gridWrap.style.display = 'grid';
-        tableBtn.style.background = 'transparent';
-        tableBtn.style.color = 'var(--text-secondary)';
-        gridBtn.style.background = 'var(--primary)';
-        gridBtn.style.color = '#fff';
+        tableWrap.style.display = 'none'; gridWrap.style.display = 'grid';
+        tableBtn.style.background = 'transparent'; tableBtn.style.color = 'var(--text-secondary)';
+        gridBtn.style.background = 'var(--primary)'; gridBtn.style.color = '#fff';
       } else {
-        tableWrap.style.display = 'block';
-        gridWrap.style.display = 'none';
-        gridBtn.style.background = 'transparent';
-        gridBtn.style.color = 'var(--text-secondary)';
-        tableBtn.style.background = 'var(--primary)';
-        tableBtn.style.color = '#fff';
+        tableWrap.style.display = 'block'; gridWrap.style.display = 'none';
+        gridBtn.style.background = 'transparent'; gridBtn.style.color = 'var(--text-secondary)';
+        tableBtn.style.background = 'var(--primary)'; tableBtn.style.color = '#fff';
       }
     }
 
+    /* Add Student Form */
+    function syncDepartment() {
+      const course = document.getElementById('form-course').value;
+      document.getElementById('form-dept').value = COURSE_DEPT[course] || course + ' Department';
+    }
+
+    function syncMarks(val) {
+      const m = parseFloat(val) || 0;
+      document.getElementById('form-marks-num').value = m;
+      document.getElementById('form-marks-slider').value = m;
+      const st = calculateStatus(m);
+      const pill = document.getElementById('add-preview-status');
+      pill.className = `badge-status ${getStatusClass(st)}`;
+      pill.textContent = `Status Preview: ${st} (${m}%)`;
+    }
+
+    function submitNewStudent(e) {
+      e.preventDefault();
+      const id = document.getElementById('form-id').value.trim();
+      const name = document.getElementById('form-name').value.trim();
+      const email = document.getElementById('form-email').value.trim();
+      const phone = document.getElementById('form-phone').value.trim();
+      const age = parseInt(document.getElementById('form-age').value);
+      const gender = document.getElementById('form-gender').value;
+      const year = parseInt(document.getElementById('form-year').value);
+      const course = document.getElementById('form-course').value;
+      const dept = document.getElementById('form-dept').value.trim();
+      const marks = parseFloat(document.getElementById('form-marks-num').value);
+      const address = document.getElementById('form-address').value.trim();
+
+      if (students.some(s => s.id === id)) {
+        alert('Student ID already exists!');
+        return;
+      }
+
+      const newStudent = {
+        id, name, email, phone, age, gender, year, course, department: dept,
+        marks, address, status: calculateStatus(marks),
+        created_at: new Date().toISOString().split('T')[0]
+      };
+
+      students.unshift(newStudent);
+      localStorage.setItem('edupulse_students_data', JSON.stringify(students));
+      showToast('Student enrolled successfully!', 'success');
+      document.getElementById('add-form-element').reset();
+      syncMarks(80);
+
+      renderDashboard();
+      renderAnalytics();
+      filterStudents();
+      switchTab('directory');
+    }
+
+    function deleteStudent(id) {
+      if (confirm(`Are you sure you want to delete student ${id}?`)) {
+        students = students.filter(s => s.id !== id);
+        localStorage.setItem('edupulse_students_data', JSON.stringify(students));
+        showToast('Student deleted.', 'info');
+        renderDashboard();
+        renderAnalytics();
+        filterStudents();
+      }
+    }
+
+    function resetSampleData() {
+      if (confirm('Reset all records back to default sample students?')) {
+        students = [...INITIAL_DATA];
+        localStorage.setItem('edupulse_students_data', JSON.stringify(students));
+        showToast('Reset to original sample data.', 'success');
+        renderDashboard();
+        renderAnalytics();
+        filterStudents();
+      }
+    }
+
+    /* Student Profile Modal */
     function openStudentProfile(id) {
       const s = students.find(x => x.id === id);
       if (!s) return;
@@ -1222,7 +1911,7 @@
           <div style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Cumulative Grade</div>
           <div style="font-size: 2.8rem; font-weight: 800; color: var(--primary);">${s.marks}%</div>
           <div class="progress-track" style="height: 8px; margin-top: 0.5rem;">
-            <div class="progress-fill" style="width: ${s.marks}%; background: ${s.marks >= 90 ? '#10b981' : s.marks >= 70 ? '#3b82f6' : s.marks >= 60 ? '#f59e0b' : '#ef4444'};"></div>
+            <div class="progress-fill" style="width: ${s.marks}%; background: ${getStatusColor(s.status)};"></div>
           </div>
         </div>
 
@@ -1236,67 +1925,17 @@
       document.getElementById('profile-modal').classList.add('show');
     }
 
-    function openAddStudentModal() {
-      document.getElementById('add-modal').classList.add('show');
+    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+    function openShareModal() { document.getElementById('share-modal').classList.add('show'); }
+
+    function copyShareModalLink() {
+      const inp = document.getElementById('modal-share-input');
+      navigator.clipboard.writeText(inp.value).then(() => showToast('Live link copied to clipboard!', 'success'));
     }
 
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('show');
-    }
-
-    function handleCreateStudent(e) {
-      e.preventDefault();
-      const id = document.getElementById('add-id').value.trim();
-      const name = document.getElementById('add-name').value.trim();
-      const email = document.getElementById('add-email').value.trim();
-      const phone = document.getElementById('add-phone').value.trim();
-      const course = document.getElementById('add-course').value;
-      const year = parseInt(document.getElementById('add-year').value);
-      const marks = parseFloat(document.getElementById('add-marks').value);
-      const address = document.getElementById('add-address').value.trim();
-
-      if (students.some(s => s.id === id)) {
-        alert('Student ID already exists!');
-        return;
-      }
-
-      const newStudent = {
-        id, name, email, phone, course, year, marks, address,
-        status: calculateStatus(marks),
-        department: course === 'CSE' ? 'Computer Science & Engineering' : course === 'ECE' ? 'Electronics & Communication' : course + ' Department',
-        age: 20,
-        gender: 'Male',
-        created_at: new Date().toISOString().split('T')[0]
-      };
-
-      students.unshift(newStudent);
-      saveState();
-      closeModal('add-modal');
-      renderAll();
-      showToast('Student successfully enrolled!', 'success');
-      document.getElementById('add-student-form').reset();
-    }
-
-    function deleteStudent(id) {
-      if (confirm(`Are you sure you want to delete student ${id}?`)) {
-        students = students.filter(s => s.id !== id);
-        saveState();
-        renderAll();
-        showToast('Student deleted.', 'info');
-      }
-    }
-
-    function saveState() {
-      localStorage.setItem('edupulse_students_data', JSON.stringify(students));
-    }
-
-    function resetSampleData() {
-      if (confirm('Reset all records back to default sample students?')) {
-        students = [...INITIAL_STUDENTS];
-        saveState();
-        renderAll();
-        showToast('Reset to original sample data.', 'success');
-      }
+    function copySettingsLink() {
+      const inp = document.getElementById('settings-share-input');
+      navigator.clipboard.writeText(inp.value).then(() => showToast('Link copied!', 'success'));
     }
 
     function exportDataCSV() {
@@ -1306,10 +1945,14 @@
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'students.csv';
-      a.click();
+      const a = document.createElement('a'); a.href = url; a.download = 'students.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportDataJSON() {
+      const blob = new Blob([JSON.stringify(students, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'students.json'; a.click();
       URL.revokeObjectURL(url);
     }
 
@@ -1319,24 +1962,49 @@
       document.documentElement.setAttribute('data-theme', next);
       localStorage.setItem('app-theme', next);
       updateThemeIcon(next);
-      renderCharts();
+      renderDashboardCharts();
+      renderAnalytics();
     }
 
     function updateThemeIcon(theme) {
-      const icon = document.querySelector('#theme-btn i');
+      const icon = document.querySelector('#theme-toggle-btn i');
       if (icon) icon.className = theme === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
     }
 
-    function showToast(msg, type) {
-      const container = document.getElementById('toast-container');
+    function handleGlobalSearch(e) {
+      const q = e.target.value.toLowerCase().trim();
+      const drop = document.getElementById('global-search-dropdown');
+      if (!q) { drop.classList.remove('show'); return; }
+
+      const matches = students.filter(s => s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q) || s.course.toLowerCase().includes(q)).slice(0, 5);
+      if (matches.length === 0) {
+        drop.innerHTML = '<div style="padding: 1rem; color: var(--text-muted); text-align: center;">No matches found</div>';
+      } else {
+        drop.innerHTML = matches.map(s => `
+          <div class="search-result-item" onclick="openStudentProfile('${s.id}')">
+            <div class="student-avatar" style="width: 32px; height: 32px;">${s.name.charAt(0)}</div>
+            <div><div style="font-weight: 700; font-size: 0.85rem;">${s.name}</div><div style="font-size: 0.72rem; color: var(--text-muted);">${s.id} · ${s.course} (${s.marks}%)</div></div>
+          </div>
+        `).join('');
+      }
+      drop.classList.add('show');
+    }
+
+    document.addEventListener('click', (e) => {
+      const drop = document.getElementById('global-search-dropdown');
+      if (drop && !e.target.closest('.header-search-wrap')) drop.classList.remove('show');
+    });
+
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toast-container');
       const t = document.createElement('div');
       t.className = 'toast';
-      t.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--success);"></i> <span>${msg}</span>`;
-      container.appendChild(t);
+      t.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--${type === 'error' ? 'danger' : 'success'});"></i> <span>${msg}</span>`;
+      c.appendChild(t);
       setTimeout(() => t.remove(), 3500);
     }
 
-    document.addEventListener('DOMContentLoaded', initApp);
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
